@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from django.contrib import admin
-from chimareports.models import Queryset, Filter, Exclude, DisplayField
+from queryset_reporter.models import Queryset, Filter, Exclude, DisplayField
 
 
 class FilterInline(admin.StackedInline):
@@ -38,8 +38,8 @@ class QuerysetAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-            "all": ("css/chimareports.css",)
+            "all": ("queryset_reporter/queryset_reporter.css",)
         }
-        js = ("js/chimareports.js",)
+        js = ("queryset_reporter/queryset_reporter.js",)
 
 admin.site.register(Queryset, QuerysetAdmin)

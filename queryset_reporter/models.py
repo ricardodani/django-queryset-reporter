@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 '''
-Models of chimareports.
+Models of queryset_reporter.
 '''
 
 from django.utils.translation import ugettext_lazy as _
