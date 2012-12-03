@@ -32,7 +32,44 @@ class Queryset(models.Model):
         verbose_name_plural = _(u'Querysets')
 
 
-class QueryFilter(models.Model):
+class FieldedModel(models.Model):
+    queryset = models.ForeignKey(Queryset)
+    field = models.CharField(_(u'Código do Campo'), **_CHAR)
+    field_verbose = models.CharField(_(u'Nome do Campo'), **_CHAR)
+
+    class Meta:
+        abstract = True
+
+
+class DisplayField(FieldedModel):
+    '''Or the Fields and Extras selects called in .values().
+    '''
+
+    sort = models.CharField(
+        verbose_name=_(u'Ordenação'), max_length=4, choices=(
+            ('asc', _(u'Crescente')),
+            ('desc', _('Decrescente'))
+        ), default=None, **_NULL
+    )
+    annotate = models.CharField(
+        verbose_name=_(u'Anotação'), max_length=5, choices=(
+            ('Count', _(u'Somatório')),
+            ('Ave', _(u'Média')),
+            ('Max', _(u'Máximo')),
+            ('Min', _(u'Mínimo')),
+        ), **_NULL
+    )
+    position = models.PositiveSmallIntegerField(**_NULL)
+
+    def __unicode__(self):
+        return u'%s por %s' % (self.field_verbose)
+
+    class Meta:
+        verbose_name = _(u'Campo a exibir')
+        verbose_name_plural = _(u'Campos à exibir')
+        ordering = ['position']
+
+class QueryFilter(FieldedModel):
     '''
     QueryFilter of a Queryset
     '''
@@ -65,8 +102,6 @@ class QueryFilter(models.Model):
         ('exclude', _(u'Exclusão')),
     )
 
-    queryset = models.ForeignKey(Queryset)
-    field = models.CharField(_(u'Campo'), **_CHAR)
     lookup = models.CharField(
         _(u'Tipo de filtro'), max_length=max([len(x[0]) for x in LOOKUPS]),
         choices=LOOKUPS)
@@ -136,17 +171,3 @@ class Exclude(QueryFilter):
         proxy = True
         verbose_name = _('Filtro de Exclusão')
         verbose_name_plural = _('Filtros de Exclusão')
-
-
-class Order(models.Model):
-    '''
-    Order handles a .order_by()
-    '''
-
-    queryset = models.ForeignKey(Queryset)
-    field = models.CharField(_(u'Campo'), **_CHAR)
-    desc = models.BooleanField(_(u'Ordem decrescente?'), default=False)
-
-    class Meta:
-        verbose_name = _(u'Ordem')
-        verbose_name = _(u'Ordens')
