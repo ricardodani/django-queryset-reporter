@@ -30,8 +30,13 @@ class QuerysetAdmin(admin.ModelAdmin):
     list_display = ('name', 'desc', 'model', 'created_at', 'modified_at')
     list_filter = ('model', 'created_at', 'modified_at')
     inlines = (FilterInline, ExcludeInline, DisplayFieldInline)
+    fieldsets = (
+        ('Dados básicos', {
+            'fields': ('name', 'desc', 'model')
+        }),
+    )
 
-    class Midia:
+    class Media:
         css = {
             "all": ("css/chimareports.css",)
         }

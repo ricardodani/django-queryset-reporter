@@ -27,6 +27,7 @@ def model_fields(request):
     else:
         model = ctype.model_class()
 
+    # thank`s for https://github.com/burke-software/django-report-builder
     _all_fields = [
         model._meta.get_field_by_name(x)
         for x in model._meta.get_all_field_names()]
@@ -59,4 +60,7 @@ def model_fields(request):
     #17(<RelatedObject: tplay_auth:usuariofilme related to filme>, None, False, False),
     #18(<django.db.models.fields.PositiveIntegerField at 0x10e3336d0>, None, True, False)]
 
-    return json_response()
+    return json_response({
+        'related_fields': related_fields,
+        'direct_fields': direct_fields
+    })

@@ -5,10 +5,12 @@ from django.conf import settings
 
 from chimareports.views.ajax import model_fields
 
-urlpatterns = patterns('',
-
+urlpatterns = patterns(
+    '',
     # AJAX VIEWS
-
-    url(r'^ajax/model-fields/$', model_fields, name='ajax-model-fields'),
+    url(
+        r'^admin/queryset_reporter/ajax/model-fields/$',
+        model_fields, name='ajax-model-fields'
+    ),
 
 )
