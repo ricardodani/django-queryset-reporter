@@ -1,8 +1,17 @@
 # -*- encoding: utf-8 -*-
 
 from django import forms
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from queryset_reporter.models import Filter, Exclude, DisplayField
+
+# Defaults to True, if False, `fie1d` and `field_verbose` are displayed in
+# admin.
+QR_HIDE_FIELDS = getattr(settings, 'QR_HIDE_FIELDS', True)
+if QR_HIDE_FIELDS:
+    _widget = forms.HiddenInput
+else:
+    _widget = forms.TextInput
 
 
 class FieldedModelForm(forms.ModelForm):
@@ -10,16 +19,18 @@ class FieldedModelForm(forms.ModelForm):
     A model form that`s hidden field and field_verbose with a HiddenInput
     widget and add`s a `model_field` ChoiceField to the form.
     '''
-    field = forms.CharField(required=True, widget=forms.HiddenInput(
-        attrs={'class': 'instrospect-field'}
-    ))
-    field_verbose = forms.CharField(required=True, widget=forms.HiddenInput(
-        attrs={'class': 'introspect-field_verbose'}
-    ))
-    model_field = forms.ChoiceField(
-        label=_(u'Campo'), required=False,
-        widget=forms.Select(attrs={'class': 'introspect-model_field'})
-    )
+
+    field = forms.CharField(
+        label=_(u'Código do campo'), required=True,
+        widget=_widget(attrs={'class': 'introspect-field'}))
+
+    field_verbose = forms.CharField(
+        label=_(u'Apelido do campo'), required=True,
+        widget=_widget(attrs={'class': 'introspect-field_verbose'}))
+
+    model_field = forms.CharField(
+        label=_(u'Buscar campo'), required=False,
+        widget=forms.Select(attrs={'class': 'introspect-model_field'}))
 
 
 class DisplayFieldForm(FieldedModelForm):

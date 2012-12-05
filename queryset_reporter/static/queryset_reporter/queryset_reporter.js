@@ -58,7 +58,7 @@ function populate_model_data($inline_item) {
 function populate_model_defaults($inline_item) {
 
     // hidden with field name
-    var field = $inline_item.find('.instrospect-field');
+    var field = $inline_item.find('.introspect-field');
     // hidden with verbose
     var verbose = $inline_item.find('.introspect-field_verbose');
     // select
@@ -122,6 +122,21 @@ $(document).ready(function() {
             });
         }
     }).change();
+
+    /*
+     * For every change in the `model_field` of the inlines.
+     * Copies the <select> information to `field` and `field_verbose`.
+     * */
+    $('#queryset_form .introspect-model_field').change(function(event) {
+        var $model_field = $(this);
+        var $option = $model_field.find('option:selected');
+        var $div_parent = $model_field.parent().parent();
+        var $name = $div_parent.find('.introspect-field');
+        var $verb = $div_parent.find('.introspect-field_verbose');
+        $verb.val($option.text());
+        $name.val($option.val());
+    });
+
 });
 
 }(django.jQuery));

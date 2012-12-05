@@ -39,11 +39,12 @@ def field_meta(field, only_normal=False):
     '''
 
     # First verify if `field` is direct or no
+
     if field[2]:
         # If the field is direct, means that it can be a ForeigKey,
         # ManyToManyField or a <?>Field (? = Char, Integer, ...)
         return _direct_field(field[0], only_normal)
-    elif isinstance(field, RelatedObject) and not only_normal:
+    elif isinstance(field[0], RelatedObject) and not only_normal:
         return _related_object(field[0])
     else:
         None
