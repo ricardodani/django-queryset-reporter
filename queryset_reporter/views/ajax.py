@@ -25,6 +25,9 @@ def model_fields(request):
     except ContentType.DoesNotExist:
         return json_response({
             'success': False, 'error': _(u'Modelo inexiste.')})
+    except ValueError:
+        return json_response({
+            'success': False, 'error': _(u'Identificador do modelo inválido')})
 
     model = ctype.model_class()
     if not model:
@@ -34,5 +37,7 @@ def model_fields(request):
 
     return json_response({
         'success': True,
+        'model': unicode(model),
+        'model_verbose': model._meta.verbose_name.format('%s'),
         'fields': get_model_fields(model),
     })

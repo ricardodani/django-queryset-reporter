@@ -1,16 +1,24 @@
 """
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
+queryset_reporter tests.
 """
 
 from django.test import TestCase
 
 
 class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def test_ajax_return_aways_200(self):
+        '''
+        Test in a range of 0 to 100, if all the ajax calls to model:
+        /queryset_reporter/ajax/model-fields/?model=<id> returns a 200 code.
+        '''
+        for i in range(100):
+            url = '/queryset_reporter/ajax/model-fields/?model=%d'
+            response = self.client.get(url % i)
+            self.assertUnlessEqual(response.status_code, 200)
+
+    def test_ajax_return_with_none_model_id(self):
+        '''
+        Test if the returns is 200 if the model id is none.
+        '''
+        response = self.client.get('/queryset_reporter/ajax/model-fields/?model=')
+        self.assertUnlessEqual(response.status_code, 200)

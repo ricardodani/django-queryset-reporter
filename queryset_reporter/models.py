@@ -7,6 +7,7 @@ Models of queryset_reporter.
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 _NULL = {'null': True, 'blank': True}
 _CHAR = {'max_length': 255}
@@ -18,9 +19,22 @@ class Queryset(models.Model):
     '''Queryset is a model representation of a generic Model.
     '''
 
+    def _get_allowed_models():
+        # TODO: make a model to handle this. To only permit models. The
+        # rest is forbiden
+        models = ContentType.objects.all()
+        if getattr(settings, 'QUERYSET_REPORTER_INCLUDE', False):
+            models = models.filter(name__in=settings.QUERYSET_REPORTER_INCLUDE)
+        if getattr(settings, 'QUERYSET_REPORTER_EXCLUDE', False):
+            models = models.exclude(name__in=settings.QUERYSET_REPORTER_EXCLUDE)
+        return models
+
     name = models.CharField(_(u'Nome'), **_CHAR)
     desc = models.TextField(_(u'Descrição'), **_CHAR)
-    model = models.ForeignKey(ContentType, verbose_name=_(u'Modelo'))
+    model = models.ForeignKey(
+        ContentType, verbose_name=_(u'Modelo'),
+        limit_choices_to={'pk__in': _get_allowed_models})
+    distinct = models.BooleanField(_(u'Distinção'), default=False)
     created_at = models.DateTimeField(_(u'Criação'), auto_now_add=True)
     modified_at = models.DateTimeField(_(u'Modificação'), auto_now=True)
 
@@ -62,12 +76,13 @@ class DisplayField(FieldedModel):
     position = models.PositiveSmallIntegerField(**_NULL)
 
     def __unicode__(self):
-        return u'%s por %s' % (self.field_verbose)
+        return u'%s' % (self.field_verbose)
 
     class Meta:
         verbose_name = _(u'Campo a exibir')
         verbose_name_plural = _(u'Campos à exibir')
         ordering = ['position']
+
 
 class QueryFilter(FieldedModel):
     '''
