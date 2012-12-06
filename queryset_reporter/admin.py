@@ -46,7 +46,7 @@ class QuerysetAdmin(admin.ModelAdmin):
     inlines = (DisplayFieldInline, FilterInline, ExcludeInline)
     fieldsets = (
         ('Dados básicos', {
-            'fields': ('name', 'desc', 'model')
+            'fields': ('name', 'desc', 'model', 'distinct')
         }),
     )
 

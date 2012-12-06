@@ -34,7 +34,10 @@ class Queryset(models.Model):
     model = models.ForeignKey(
         ContentType, verbose_name=_(u'Modelo'),
         limit_choices_to={'pk__in': _get_allowed_models})
-    distinct = models.BooleanField(_(u'Distinção'), default=False)
+    distinct = models.BooleanField(_(u'Distinguir'), help_text=_(u'''
+        Útil quando relatórios que acessam muitas tabelas tem a possibilidade
+        de retornar resultados repetidos, marcar este campo desabilita a
+        repetição.'''), default=False)
     created_at = models.DateTimeField(_(u'Criação'), auto_now_add=True)
     modified_at = models.DateTimeField(_(u'Modificação'), auto_now=True)
 
@@ -42,8 +45,8 @@ class Queryset(models.Model):
         return u'[%s] %s' % (self.model.name, self.name)
 
     class Meta:
-        verbose_name = _(u'Queryset')
-        verbose_name_plural = _(u'Querysets')
+        verbose_name = _(u'Modelo de Relatório')
+        verbose_name_plural = _(u'Modelos de Relatórios')
 
 
 class FieldedModel(models.Model):
@@ -156,8 +159,8 @@ class Filter(QueryFilter):
 
     class Meta:
         proxy = True
-        verbose_name = _(u'Filtro Padrão')
-        verbose_name_plural = _(u'Filtros Padrões')
+        verbose_name = _(u'Filtro')
+        verbose_name_plural = _(u'Filtros')
 
 
 class ExcludeManager(models.Manager):
@@ -183,5 +186,5 @@ class Exclude(QueryFilter):
 
     class Meta:
         proxy = True
-        verbose_name = _('Filtro de Exclusão')
-        verbose_name_plural = _('Filtros de Exclusão')
+        verbose_name = _('Exclusão')
+        verbose_name_plural = _('Exclusões')

@@ -22,7 +22,7 @@ class FieldedModelForm(forms.ModelForm):
 
     field = forms.CharField(
         label=_(u'Nome do campo'), required=True,
-        widget=_widget(attrs={'class': 'introspect-field'}))
+        widget=_widget(attrs={'class': 'introspect-field', 'readonly': 'readonly'}))
 
     field_verbose = forms.CharField(
         label=_(u'Apelido do campo'), required=True,
@@ -30,7 +30,7 @@ class FieldedModelForm(forms.ModelForm):
 
     field_type = forms.CharField(
         label=_(u'Tipo do campo'), required=True,
-        widget=_widget(attrs={'class': 'introspect-field_type'}))
+        widget=_widget(attrs={'class': 'introspect-field_type', 'readonly': 'readonly'}))
 
     model_field = forms.CharField(
         label=_(u'Buscar campo'), required=False,
