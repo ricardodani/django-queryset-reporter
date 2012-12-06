@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 _NULL = {'null': True, 'blank': True}
-_CHAR = {'max_length': 255}
+_CHAR = {'max_length': 255, 'blank': False}
 _CNULL = _CHAR
 _CNULL.update(_NULL)
 
@@ -50,6 +50,7 @@ class FieldedModel(models.Model):
     queryset = models.ForeignKey(Queryset)
     field = models.CharField(_(u'Código do Campo'), **_CHAR)
     field_verbose = models.CharField(_(u'Nome do Campo'), **_CHAR)
+    field_type = models.CharField(_(u'Tipo do Campo'), **_CHAR)
 
     class Meta:
         abstract = True
@@ -76,7 +77,7 @@ class DisplayField(FieldedModel):
     position = models.PositiveSmallIntegerField(**_NULL)
 
     def __unicode__(self):
-        return u'%s' % (self.field_verbose)
+        return self.field_verbose
 
     class Meta:
         verbose_name = _(u'Campo a exibir')
@@ -120,8 +121,6 @@ class QueryFilter(FieldedModel):
     lookup = models.CharField(
         _(u'Tipo de filtro'), max_length=max([len(x[0]) for x in LOOKUPS]),
         choices=LOOKUPS)
-    value = models.CharField(_(u'Valor'), **_CHAR)
-    value_2 = models.CharField(_(u'Valor opcicional'), **_CNULL)
     method = models.CharField(
         _(u'Método'), choices=FILTER_METHODS, editable=False,
         max_length=max([len(x[0]) for x in FILTER_METHODS]))

@@ -5,8 +5,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from queryset_reporter.models import Filter, Exclude, DisplayField
 
-# Defaults to True, if False, `fie1d` and `field_verbose` are displayed in
-# admin.
+# Defaults to True, if False, `fie1d`, `field_verbose`, `field_type` are
+# displayed in admin.
 QR_HIDE_FIELDS = getattr(settings, 'QR_HIDE_FIELDS', True)
 if QR_HIDE_FIELDS:
     _widget = forms.HiddenInput
@@ -21,12 +21,16 @@ class FieldedModelForm(forms.ModelForm):
     '''
 
     field = forms.CharField(
-        label=_(u'Código do campo'), required=True,
+        label=_(u'Nome do campo'), required=True,
         widget=_widget(attrs={'class': 'introspect-field'}))
 
     field_verbose = forms.CharField(
         label=_(u'Apelido do campo'), required=True,
         widget=_widget(attrs={'class': 'introspect-field_verbose'}))
+
+    field_type = forms.CharField(
+        label=_(u'Tipo do campo'), required=True,
+        widget=_widget(attrs={'class': 'introspect-field_type'}))
 
     model_field = forms.CharField(
         label=_(u'Buscar campo'), required=False,

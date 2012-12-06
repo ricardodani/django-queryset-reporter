@@ -13,7 +13,7 @@ class DisplayFieldInline(admin.TabularInline):
     inline_classes = ('collapse',)
     sortable_field_name = "position"
     fields = (
-        'field', 'field_verbose', 'model_field', 'sort', 'annotate',
+        'field', 'field_verbose', 'field_type', 'model_field', 'sort', 'annotate',
         'position'
     )
 
@@ -25,7 +25,7 @@ class FilterInline(admin.TabularInline):
     classes = ('collapse open',)
     inline_classes = ('collapse',)
     fields = (
-        'field', 'field_verbose', 'model_field', 'lookup', 'value', 'value_2',
+        'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
     )
 
 
@@ -36,7 +36,7 @@ class ExcludeInline(admin.TabularInline):
     classes = ('collapse open',)
     inline_classes = ('collapse',)
     fields = (
-        'field', 'field_verbose', 'model_field', 'lookup', 'value', 'value_2',
+        'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
     )
 
 

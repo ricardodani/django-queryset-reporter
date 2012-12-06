@@ -5,7 +5,7 @@ queryset_reporter tests.
 from django.test import TestCase
 
 
-class SimpleTest(TestCase):
+class AjaxViewsTest(TestCase):
     def test_ajax_return_aways_200(self):
         '''
         Test in a range of 0 to 100, if all the ajax calls to model:

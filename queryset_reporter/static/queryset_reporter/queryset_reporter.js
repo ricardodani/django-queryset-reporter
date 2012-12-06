@@ -10,24 +10,28 @@
 (function($) {
 // django jquery namespace
 
-function option(val, verbose, selected) {
+function option(val, verbose, type, selected) {
     /*
      * Return a <option> with value, verbose and selected bool.
      * */
     var selected = selected || false;
-    // returns a <option> jQuery object with the give `val` and `verbose`.
+    var $opt = $('<option>');
+    $opt.val(val);
+    $opt.text(verbose);
     if (selected == true) {
-        return $('<option value="' + val + '" selected="selected">' +
-                 verbose + '</option>');
-    } else {
-        return $('<option value="' + val + '">' + verbose + '</option>');
+        $opt.attr('selected', 'selected');
     }
+    if (type != null) {
+        $opt.attr('data-type', type)
+    }
+    // returns a <option> jQuery object with the give `val` and `verbose`.
+    return $opt;
 }
 
 function populate_clean($inline_item) {
     var model_field = $inline_item.find('.introspect-model_field');
     $(model_field).empty(); 
-    model_field.append(option('', '-------'));
+    model_field.append(option('', '-------', null));
 }
 
 function populate_model_data($inline_item) {
@@ -42,13 +46,13 @@ function populate_model_data($inline_item) {
     console.log(data);
     if (data.success) {
         $.each(data.fields, function (i, field) {
-            model_field.append(option(field.name, field.verbose));
+            model_field.append(option(field.name, field.verbose, field.type));
             if (typeof field.lookup_fields != 'undefined') {
                 $.each(field.lookup_fields, function (j, lfield) {
                     //model_field.append(option(field.name, field.verbose));
                     var lf_name = field.name + '__'  + lfield.name;
                     var lf_verbose = field.verbose + ' -> ' + lfield.verbose;
-                    model_field.append(option(lf_name, lf_verbose));
+                    model_field.append(option(lf_name, lf_verbose, lfield.type));
                 });
             }
         });
@@ -125,7 +129,7 @@ $(document).ready(function() {
 
     /*
      * For every change in the `model_field` of the inlines.
-     * Copies the <select> information to `field` and `field_verbose`.
+     * Copies the <select> information to `field`, `field_verbose` and `field_type`.
      * */
     $('#queryset_form .introspect-model_field').change(function(event) {
         var $model_field = $(this);
@@ -133,8 +137,10 @@ $(document).ready(function() {
         var $div_parent = $model_field.parent().parent();
         var $name = $div_parent.find('.introspect-field');
         var $verb = $div_parent.find('.introspect-field_verbose');
+        var $type = $div_parent.find('.introspect-field_type');
         $verb.val($option.text());
         $name.val($option.val());
+        $type.val($option.attr('data-type'));
     });
 
 });
