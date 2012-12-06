@@ -14,20 +14,23 @@ Type::
 
    python setup.py install
 
-usage
------
-
 In your settings.INSTALLED_APPS add::
 
   queryset_reporter
 
-syncdb or migrate (with south)::
+migrate (with you`re using south)::
 
   ./manage.py migrate queryset_reporter
 
-or::
+or (if not south)::
 
   ./manage.py syncdb queryset_reporter
+
+tested on
+---------
+
+- django==1.3.1
+- django-grappelli==2.3.9 (i don`t know if works without grappelli, i think it works)
 
 about
 -----
