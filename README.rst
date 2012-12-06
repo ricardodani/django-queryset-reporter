@@ -28,6 +28,11 @@ or (if not south)::
 
   ./manage.py syncdb queryset_reporter
 
+add url`s definitions to your project.urls module::
+
+    # Queryset reporter
+    url(r'^', include('queryset_reporter.urls')),
+
 tested on
 ---------
 
