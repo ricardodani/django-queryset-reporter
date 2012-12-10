@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<input type="checkbox" class="pull-left filter-checkbox"
+    name="filter-{{ filter.id }}" id="id-filter-{{ filter.id }}" />
+<h5>{{ filter|capfirst }}</h5>
+<div class="inputs">
+{% if filter.lookup_config %}
+    {% for lookup in filter.lookup_config %}
+        {% if lookup.0 == 'boolean-field' %}
+            <select class="filter-field boolean-field" name="filter-{{ filter.id }}-{{ lookup.1 }}" disabled="disabled">
+                <option value='1'>{% trans "Verdadeiro" %}</option>
+                <option value='0'>{% trans "Falso" %}</option>
+            </select>
+        {% else %}
+        <input type="text" class="filter-field {{ lookup.0 }}
+            {% if filter.lookup_config|length == 1 %}input-large{% else %}input-small{% endif%}"
+            name="filter-{{ filter.id }}-{{ lookup.1 }}" disabled="disabled" />
+        {% endif %}
+        {% if not forloop.last %} — {% endif %}
+    {% endfor %}
+{% endif %}
+</div>

@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.utils.simplejson import dumps
 from django.contrib.contenttypes.models import ContentType
-from queryset_reporter.core import get_model_fields
+from queryset_reporter.introspect import get_model_fields
 
 
 def json_response(obj):

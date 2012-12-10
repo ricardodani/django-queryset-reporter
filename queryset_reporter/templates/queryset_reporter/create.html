@@ -1,0 +1,119 @@
+{% extends "queryset_reporter/base.html" %}
+
+{% load i18n %}
+
+{% block extra-js %}
+{% endblock %}
+
+{% block content %}
+<form action="{% url qsr_create %}" method="GET" id="querysets-form">
+{% if queryset %}
+<input type="hidden" value="{{ queryset.id }}" name="queryset" /> 
+{% endif %}
+<div class="row-fluid">
+    {% if queryset %}    
+    <div class="span3">
+        <ul class="nav filter-nav">
+            {% if filters %}
+            <li class="nav-header">{% trans "Filtros" %}</li>
+                {% for f in filters %}
+                <li>
+                {% include 'queryset_reporter/filter_fields.html' with filter=f %}
+                </li>
+                {% endfor %}
+            {% endif %}
+            {% if excludes %}
+            <li class="nav-header">{% trans "Exclusões" %}</li>
+                {% for e in excludes %}
+                <li>
+                {% include 'queryset_reporter/filter_fields.html' with filter=e %}
+                </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="span9">
+            <fieldset>
+                <legend>
+                    {% if queryset %}
+                        {{ queryset }}
+                    {% else %}
+                        {% trans "Criar Relatório" %}
+                    {% endif %}
+                </legend>
+                {% if queryset%}
+                <div class="btn-toolbar">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="icon-refresh"></i>
+                        {% trans "Aplicar filtros" %}</button>
+                    <div class="btn-group">
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">{% trans "Ação" %} <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url qsr_create %}?queryset={{ queryset.pk }}">{% trans "Zerar filtros" %}</a></li>
+                        <li><a href="{% url qsr_create %}">{% trans "Selecionar outro modelo" %}</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                    <div class="btn-group">
+                        <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">{% trans "Gerar relatório" %}<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                        <li><a href="#">XLS</a></li>
+                        <li><a href="#">CSV</a></li>
+                        <li><a href="#">PDF</a></li>
+                        <li><a href="#">HTML</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                </div><!-- /btn-toolbar -->
+                {% else %}
+                <select class="input-xxlarge" name="queryset">
+                    <option value="">{% trans "Selecione o modelo" %}</option>
+                    {% for qs in querysets %}
+                    <option value="{{ qs.pk }}"
+                        {% if qs.pk == queryset.pk %} selected="selected"{% endif %}>
+                        {{ qs }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </fieldset>
+        </form>
+
+        <h3>{% trans "Informações do relatório gerado" %}</h3>
+        <dl>
+            <dt>{% trans "Total de resultados" %}</dt>
+            <dd>{{ reporter.rqs.count }}</dd>
+            {% for filter in reporter.filters %}
+            <dt>{{ filter.filter.method }}: {{ filter.filter }}</dt>
+            <dd>{{ filter.values }}</dd>
+            {% endfor %}
+        </dl>
+        <hr />
+
+        {% with reporter.preview as preview %}
+        {% if preview %}
+        <table class="table table-striped table-condensed table-hover table-bordered">
+            <thead>
+                <tr>
+                {% for field in display_fields %}
+                    <th>{{ field.field_verbose|capfirst }}</th>
+                {% endfor%}
+                </tr>
+            </thead>
+            <tbody>
+            {% for line in preview %}
+            <tr>
+                {% for item in line %}
+                <td>{{ item }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+</div>
+</form>
+{% endblock %}

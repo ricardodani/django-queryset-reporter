@@ -1,5 +1,5 @@
 /*
- * queryset_reporter.js
+ * admin.js
  *
  * Author: Ricardo Dani
  * E-mail: ricardodani@gmail.com
@@ -141,6 +141,10 @@ $(document).ready(function() {
         $verb.val($option.text());
         $name.val($option.val());
         $type.val($option.attr('data-type'));
+    });
+
+    $('input[type=checkbox]').change(function() {
+        alert('checkbox changed!');
     });
 
 });

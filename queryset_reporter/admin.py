@@ -51,9 +51,6 @@ class QuerysetAdmin(admin.ModelAdmin):
     )
 
     class Media:
-        css = {
-            "all": ("queryset_reporter/queryset_reporter.css",)
-        }
-        js = ("queryset_reporter/queryset_reporter.js",)
+        js = ("queryset_reporter/admin.js",)
 
 admin.site.register(Queryset, QuerysetAdmin)

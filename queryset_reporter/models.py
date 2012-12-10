@@ -8,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.template.loader import render_to_string
+from queryset_reporter import mapping
 
 _NULL = {'null': True, 'blank': True}
 _CHAR = {'max_length': 255, 'blank': False}
@@ -93,29 +95,7 @@ class QueryFilter(FieldedModel):
     QueryFilter of a Queryset
     '''
 
-    LOOKUPS = (
-        ('exact', _(u'Termo exato')),
-        ('iexact', _(u'Termo exato (case-insensitivo)')),
-        ('contains', _(u'Contém o termo')),
-        ('icontains', _(u'Contém o termo (case-insensitivo)')),
-        ('in', _(u'Termo está na lista')),
-        ('gt', _(u'Maior que')),
-        ('gte', _(u'Maior ou igual que')),
-        ('lt', _(u'Menor que')),
-        ('lte', _(u'Menor ou igual que')),
-        ('startswith', _(u'Começa com')),
-        ('istartswith', _(u'Começa com (case-insensitivo)')),
-        ('endswith', _(u'Termina com')),
-        ('iendswith', _(u'Termina com (case-insensitivo)')),
-        ('range', _(u'Faixa/período')),
-        ('year', _(u'Ano específico')),
-        ('month', _(u'Mês específico')),
-        ('day', _(u'Dia específico.')),
-        ('isnull', _(u'É nulo?')),
-        ('search', _(u'Busca textual')),  # mysql
-        ('regex', _(u'Expressão regular')),
-        ('iregex', _(u'Expressão regular (case-insensitivo)')),
-    )
+    LOOKUPS = mapping.LOOKUPS
     FILTER_METHODS = (
         ('filter', _(u'Filtro')),
         ('exclude', _(u'Exclusão')),
@@ -129,7 +109,19 @@ class QueryFilter(FieldedModel):
         max_length=max([len(x[0]) for x in FILTER_METHODS]))
 
     def __unicode__(self):
-        return u'%s por %s' % (self.field, self.get_lookup_display())
+        return u'%s por %s' % (self.field_verbose, self.get_lookup_display())
+
+    @property
+    def lookup_config(self):
+        lookup_info = mapping.LOOKUP_MAPPING[self.field_type]
+        if self.lookup:
+            lookup_config = lookup_info.get(self.lookup)
+        else:
+            lookup_config = None
+        # returns something like
+        # [('numerical-field', 0), ('numerical-field', 1)] or None
+        return [(lookup_config[1], x) for x in range(lookup_config[0])] \
+               if lookup_config else None
 
     class Meta:
         verbose_name = _(u'Filtro de query')

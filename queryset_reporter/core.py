@@ -1,76 +1,73 @@
 # -*- encoding: utf-8 -*-
 
-from django.db.models.fields.related import RelatedField
-from django.db.models.related import RelatedObject
+from datetime import datetime
+from django.utils.translation import ugettext_lazy as _
+from queryset_reporter.models import Queryset
 
 
-def _direct_field(field, only_normal=False):
-    field_metadata = {
-        'name': field.name,
-        'verbose': field.verbose_name.format('%s'),
-        'type': field.__class__.__name__,
-    }
-    # verify if it`s a RelatedField
-    if isinstance(field, RelatedField) and only_normal:
-        return None
-    elif isinstance(field, RelatedField):
-        # means that the field is OneToOneField, ManyToMany or a ForeignKey
-        field_metadata.update({
-            'lookup_fields': get_model_fields(field.rel.to, only_normal=True),
-        })
-    return field_metadata
-
-
-def _related_object(field):
-    # for a non direct fields
-    return {
-        'name': field.var_name,
-        'verbose': field.model._meta.verbose_name_plural.format('%s'),
-        'type': field.__class__.__name__,
-        'lookup_fields': get_model_fields(
-            field.field.model, only_normal=True),
-    }
-
-
-def field_meta(field, only_normal=False):
+class Reporter(object):
     '''
-    Return the name of the field, your verbose name, your type and your lookup
-    fields, if exist and if `only_normal` is False.
+    Manipulates a ``queryset_reporter.models.Queryset`` model to
+    obtain another queryset based on ``Queryset`` metadada.
     '''
 
-    # First verify if `field` is direct or no
+    def __init__(self, queryset, filters=None):
+        if isinstance(queryset, Queryset):
+            self.queryset = queryset
+            self.filters = filters
+            self._prepare_vars()
+            self._filters()
+        else:
+            raise Exception(_(u'Instância de Modelo de Queryset inválida.'))
 
-    if field[2]:
-        # If the field is direct, means that it can be a ForeigKey,
-        # ManyToManyField or a <?>Field (? = Char, Integer, ...)
-        return _direct_field(field[0], only_normal)
-    elif isinstance(field[0], RelatedObject) and not only_normal:
-        return _related_object(field[0])
-    else:
-        None
+    def _prepare_vars(self):
+        # rsq -> result queryset
+        self.rqs = self.queryset.model.model_class().objects.all()
+        # fields -> display fields
+        self.fields = self.queryset.displayfield_set.all()
 
+    @staticmethod
+    def _clean_values(values, config):
+        def _clean_val(value, field_type):
+            if field_type == 'datetime-field':
+                return datetime.strptime(value, '%d/%m/%Y %H:%M')
+            elif field_type == 'boolean-field':
+                if value == '1':
+                    return True
+                else:
+                    return False
+            elif field_type == 'char-field':
+                return value
+            else:
+                if '.' in value:
+                    return float(value)
+                else:
+                    return int(value)
 
-def get_model_fields(model, only_normal=False):
-    '''
-    Makes a instrospection in the fields of an given model and return all the
-    fields with attribute name, verbose name and type.
-    For related fields, like ForeignKey, ManyToManyField, OneToOneField and
-    not direct fields, return them into key `lookup_fields`, and, for each of
-    them, call this function again, but with `only_normal`=True, to certify
-    a maximum of 1 level introspection.
-    '''
+        cleaned_values = [_clean_val(values[x], config[x][0])
+                          for x in range(len(values))]
+        if len(cleaned_values) == 1:
+            return cleaned_values[0]
+        else:
+            return cleaned_values
 
-    fields = []
-    for field_name in model._meta.get_all_field_names():
-        # get_field_by_name(field_name) -> Returns the (field_object, model,
-        # direct, m2m), where field_object is the Field instance for the given
-        # name, model is the model containing this field (None for local
-        # fields), direct is True if the field exists on this model, and m2m
-        # is True for many-to-many relations. When 'direct' is False,
-        # 'field_object' is the corresponding RelatedObject for this field
-        # (since the field doesn't have an instance associated with it).
-        field = model._meta.get_field_by_name(field_name)
-        f = field_meta(field, only_normal)
-        if f:
-            fields.append(f)
-    return fields
+    def _filters(self):
+        for f in self.filters:
+            flookup = '__'.join((f['filter'].field, f['filter'].lookup))
+            fvalues = self._clean_values(f['values'], f['filter'].lookup_config)
+
+            if f['filter'].method == u'filter':
+                # append filter method
+                self.rqs = self.rqs.filter(**{flookup: fvalues})
+            elif f['filter'].method == u'exclude':
+                # append exclude method
+                self.rqs = self.rqs.exclude(**{flookup: fvalues})
+
+    def _fields_list(self):
+        return [x.field for x in self.fields]
+
+    def _get_base_qs(self):
+        return self.rqs.values_list(*self._fields_list())
+
+    def preview(self, limit=50):
+        return self._get_base_qs()[:limit]
