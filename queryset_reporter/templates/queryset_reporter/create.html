@@ -6,6 +6,15 @@
 {% endblock %}
 
 {% block content %}
+
+{% if rendered_csv %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <h4>{% trans "CSV gerado" %}</h4>
+  {% trans "Acesse-o através desta URL: " %}<a href="{{ rendered_csv }}">{{ rendered_csv }}</a>
+</div>
+{% endif %}
+
 <form action="{% url qsr_create %}" method="GET" id="querysets-form">
 {% if queryset %}
 <input type="hidden" value="{{ queryset.id }}" name="queryset" /> 
@@ -58,10 +67,13 @@
                     <div class="btn-group">
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">{% trans "Gerar relatório" %}<span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                        <li><a href="#">XLS</a></li>
+                            <li><a href="?{{ request.META.QUERY_STRING }}&format=csv">CSV</a></li>
+                        {% comment %}
+                        <li><a href="?{{ request.META.QUERY_STRING }}&format=xls">XLS</a></li>
                         <li><a href="#">CSV</a></li>
                         <li><a href="#">PDF</a></li>
                         <li><a href="#">HTML</a></li>
+                        {% endcomment %}
                         </ul>
                     </div><!-- /btn-group -->
                 </div><!-- /btn-toolbar -->
@@ -79,16 +91,12 @@
             </fieldset>
         </form>
 
-        <h3>{% trans "Informações do relatório gerado" %}</h3>
         <dl>
             <dt>{% trans "Total de resultados" %}</dt>
             <dd>{{ reporter.rqs.count }}</dd>
-            {% for filter in reporter.filters %}
-            <dt>{{ filter.filter.method }}: {{ filter.filter }}</dt>
-            <dd>{{ filter.values }}</dd>
-            {% endfor %}
+            <dt>{% trans "Pré-visualização" %}</dt>
+            <dd>{{ reporter.preview.count }}</dd>
         </dl>
-        <hr />
 
         {% with reporter.preview as preview %}
         {% if preview %}

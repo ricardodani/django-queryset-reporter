@@ -1,6 +1,11 @@
 # -*- encoding: utf-8 -*-
 
+import os
+import uuid
+import codecs
+import csv
 from datetime import datetime
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from queryset_reporter.models import Queryset
 
@@ -55,7 +60,6 @@ class Reporter(object):
         for f in self.filters:
             flookup = '__'.join((f['filter'].field, f['filter'].lookup))
             fvalues = self._clean_values(f['values'], f['filter'].lookup_config)
-
             if f['filter'].method == u'filter':
                 # append filter method
                 self.rqs = self.rqs.filter(**{flookup: fvalues})
@@ -66,8 +70,32 @@ class Reporter(object):
     def _fields_list(self):
         return [x.field for x in self.fields]
 
-    def _get_base_qs(self):
-        return self.rqs.values_list(*self._fields_list())
+    def get_base_qs(self):
+        # f-> field, s -> sort
+        # if sort is 'desc' prepend a `-` in front of `f` string
+        sort_field = lambda f, s: (u'-%s' % f) if s == u'desc' else f
+        # order_by <- a list of order_by fields with order signals
+        # i.e: ['title', '-creation_time']
+        order_by = [
+            sort_field(x.field, x.sort) for x in
+            self.queryset.displayfield_set.filter(sort__isnull=False)
+        ]
+        return self.rqs.order_by(*order_by).values_list(*self._fields_list())
 
     def preview(self, limit=50):
-        return self._get_base_qs()[:limit]
+        return self.get_base_qs()[:limit]
+
+    def render_csv(self):
+        '''Render a .CSV and return the file_url.
+        '''
+        file_name = 'csvs/%s.csv' % uuid.uuid4().hex
+        file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        with codecs.open(file_path, 'wb', 'utf-8') as csvfile:
+            spamwriter = csv.writer(csvfile, strict=True)
+            spamwriter.writerow([
+                x.field_verbose for x in self.queryset.displayfield_set.all()
+            ])
+            for line in self.get_base_qs():
+                spamwriter.writerow(line)
+        file_url = settings.MEDIA_URL + file_name
+        return file_url
