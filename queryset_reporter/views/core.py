@@ -2,7 +2,6 @@
 
 import re
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
 from queryset_reporter.models import Queryset
 from queryset_reporter.core import Reporter
 
@@ -44,6 +43,10 @@ def create(request):
     if file_format == 'csv':
         context.update({
             'rendered_csv': reporter.render_csv()
+        })
+    elif file_format == 'xls':
+        context.update({
+            #'rendered_xls': reporter.render_xls()
         })
 
     context.update({

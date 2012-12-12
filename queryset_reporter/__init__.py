@@ -8,10 +8,12 @@ customizable values and then use it to create reports in various forms of
 data like pdf`s, xls`s, ...
 
 Thanks for https://github.com/burke-software/django-report-builder to some
-ideas and code. :)
+ideas and codes. :)
 
 Author: Ricardo Dani
-E-mail: ricardodani@gmail.com / ricardod@horizonte.tv.br
-Github: github.com/ricardani
+E-mail: ricardod@horizonte.tv.br
+Github: github.com/ricardodani
 Company: Horizonte Conteúdos LTDA.
 '''
+
+__version__ = '201212121147'

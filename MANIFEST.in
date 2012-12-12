@@ -1,0 +1,2 @@
+recursive-include queryset_reporter/templates *
+recursive-include queryset_reporter/static *
