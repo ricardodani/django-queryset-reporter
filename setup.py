@@ -15,9 +15,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'django>= 1.3',
+        'django >=1.3, <=1.4',
         'south',
-        'grappelli>= 2.3.8',
+        'django-grappellii == 2.3.9',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
