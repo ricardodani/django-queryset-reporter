@@ -4,8 +4,10 @@ import re
 from django.shortcuts import render
 from queryset_reporter.models import Queryset
 from queryset_reporter.core import Reporter
+from django.contrib.auth.decorators import permission_required
 
 
+@permission_required('is_staff')
 def create(request):
     '''
     View to create report`s.

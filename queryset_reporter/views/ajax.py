@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.utils.simplejson import dumps
 from django.contrib.contenttypes.models import ContentType
 from queryset_reporter.introspect import get_model_fields
+from django.contrib.auth.decorators import permission_required
 
 
 def json_response(obj):
@@ -14,6 +15,7 @@ def json_response(obj):
     return HttpResponse(dumps(obj), mimetype='application/json')
 
 
+@permission_required('is_staff')
 def model_fields(request):
     '''Returns a list of dicts that`s represents the fields metadata of an
     given model.

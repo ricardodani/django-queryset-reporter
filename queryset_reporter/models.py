@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
-from django.template.loader import render_to_string
 from queryset_reporter import mapping
 
 _NULL = {'null': True, 'blank': True}
@@ -68,7 +67,7 @@ class DisplayField(FieldedModel):
     sort = models.CharField(
         verbose_name=_(u'Ordenação'), max_length=4, choices=(
             ('asc', _(u'Crescente')),
-            ('desc', _('Decrescente'))
+            ('desc', _(u'Decrescente'))
         ), default=None, **_NULL
     )
     annotate = models.CharField(
@@ -120,8 +119,9 @@ class QueryFilter(FieldedModel):
             lookup_config = None
         # returns something like
         # [('numerical-field', 0), ('numerical-field', 1)] or None
-        return [(lookup_config[1], x) for x in range(lookup_config[0])] \
-               if lookup_config else None
+        return [
+            (lookup_config[1], x) for x in range(lookup_config[0])
+        ] if lookup_config else None
 
     class Meta:
         verbose_name = _(u'Filtro de query')
@@ -178,5 +178,5 @@ class Exclude(QueryFilter):
 
     class Meta:
         proxy = True
-        verbose_name = _('Exclusão')
-        verbose_name_plural = _('Exclusões')
+        verbose_name = _(u'Exclusão')
+        verbose_name_plural = _(u'Exclusões')
