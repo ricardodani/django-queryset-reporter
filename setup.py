@@ -17,7 +17,7 @@ setup(
     install_requires=[
         'django >=1.3, <1.4',
         'south',
-        'django-grappellii >=2.3.8, <=2.3.9',
+        'django-grappelli >=2.3.8, <=2.3.9',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
