@@ -35,7 +35,7 @@ _NUMERICAL_LOOKUP = {
     'iexact': (1, 'numerical-field'),
     'contains': None,
     'icontains': None,
-    'in': (1, 'char-field'),
+    'in': (1, 'numerical-list'),
     'gt': (1, 'numerical-field'),
     'gte': (1, 'numerical-field'),
     'lt': (1, 'numerical-field'),
@@ -59,7 +59,7 @@ _CHAR_LOOKUP = {
     'iexact': (1, 'char-field'),
     'contains': (1, 'char-field'),
     'icontains': (1, 'char-field'),
-    'in': (1, 'char-field'),
+    'in': (1, 'char-list'),
     'gt': None,
     'gte': None,
     'lt': None,
@@ -183,4 +183,3 @@ LOOKUP_MAPPING = {
     # booleans
     'BooleanField': _BOOLEAN_LOOKUP,
 }
-

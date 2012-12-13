@@ -1,22 +1,33 @@
 {% load i18n %}
-
-<input type="checkbox" class="pull-left filter-checkbox"
-    name="filter-{{ filter.id }}" id="id-filter-{{ filter.id }}" />
-<h5>{{ filter|capfirst }}</h5>
-<div class="inputs">
-{% if filter.lookup_config %}
-    {% for lookup in filter.lookup_config %}
+<li>
+    <input type="checkbox" class="pull-left filter-checkbox"
+        {% if filter.2 %}checked="checked"{% endif %}
+        name="filter-{{ filter.0.id }}" id="id-filter-{{ filter.0.id }}" />
+    <h5>{{ filter.0|capfirst }}</h5>
+    <div class="inputs">
+    {% for lookup in filter.1 %}
         {% if lookup.0 == 'boolean-field' %}
-            <select class="filter-field boolean-field" name="filter-{{ filter.id }}-{{ lookup.1 }}" disabled="disabled">
-                <option value='1'>{% trans "Verdadeiro" %}</option>
-                <option value='0'>{% trans "Falso" %}</option>
+        <select class="filter-field boolean-field"
+                name="filter-{{ filter.0.id }}-{{ lookup.1 }}"
+                disabled="disabled">
+                <option value='1' {% if filter.2.0 == '1' %}selected="selected"{% endif %}>
+                {% trans "Verdadeiro" %}
+                </option>
+                <option value='0' {% if filter.2.0 == '0' %}selected="selected"{% endif %}>
+                {% trans "Falso" %}
+                </option>
             </select>
         {% else %}
         <input type="text" class="filter-field {{ lookup.0 }}
-            {% if filter.lookup_config|length == 1 %}input-large{% else %}input-small{% endif%}"
-            name="filter-{{ filter.id }}-{{ lookup.1 }}" disabled="disabled" />
+            {% if filter.1|length == 1 %}input-large{% else %}input-small{% endif%}"
+            name="filter-{{ filter.0.id }}-{{ lookup.1 }}"
+            {% if forloop.counter0 == 0 %}
+                {% if filter.2.0 %}value="{{ filter.2.0 }}"{% endif %}
+            {% else %}
+                {% if filter.2.1 %}value="{{ filter.2.1}}"{% endif %}
+            {% endif %}
+            disabled="disabled" />
         {% endif %}
-        {% if not forloop.last %} — {% endif %}
     {% endfor %}
-{% endif %}
-</div>
+    </div>
+</li>

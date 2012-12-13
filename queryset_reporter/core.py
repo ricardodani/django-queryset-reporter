@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import re
 import os
 import uuid
 import codecs
@@ -16,14 +17,30 @@ class Reporter(object):
     obtain another queryset based on ``Queryset`` metadada.
     '''
 
-    def __init__(self, queryset, filters=None):
+    def __init__(self, queryset, request):
         if isinstance(queryset, Queryset):
             self.queryset = queryset
-            self.filters = filters
+            self.request = request
+            self._request_filters()
             self._prepare_vars()
             self._filters()
         else:
             raise Exception(_(u'Instância de Modelo de Queryset inválida.'))
+
+    def _request_filters(self):
+        # selected_filters.
+        _rfilter = re.compile(r'^filter-([\d]+)$')
+        self.filters = [
+            {
+                'filter': self.queryset.queryfilter_set.get(id=x),
+                'values': [self.request.GET.get(y) for y in self.request.GET
+                           if y.startswith('filter-%s-' % x)]
+            } for x in [
+                int(_rfilter.match(x).groups()[0])
+                for x in self.request.GET if _rfilter.match(x)
+            ]  # returns the id`s of ``Filters`` objects.
+        ]  # returns a dict with key 'filter' equals the ``Filter`` object and
+        #    the values of the related filter.
 
     def _prepare_vars(self):
         # rsq -> result queryset
@@ -33,6 +50,8 @@ class Reporter(object):
 
     @staticmethod
     def _clean_values(values, config):
+        '''Return a pythonic value of the given list of values
+        '''
         def _clean_val(value, field_type):
             if field_type == 'datetime-field':
                 return datetime.strptime(value, '%d/%m/%Y %H:%M')
@@ -43,11 +62,17 @@ class Reporter(object):
                     return False
             elif field_type == 'char-field':
                 return value
-            else:
+            elif field_type == 'numerical-list':
+                return [int(x.strip()) for x in value.split(',') if x.strip()]
+            elif field_type == 'char-list':
+                return [x.strip() for x in value.split(',') if x.strip()]
+            elif field_type == 'numerical-field':
                 if '.' in value:
                     return float(value)
                 else:
                     return int(value)
+            else:
+                return None
 
         cleaned_values = [_clean_val(values[x], config[x][0])
                           for x in range(len(values))]
@@ -81,6 +106,26 @@ class Reporter(object):
             self.queryset.displayfield_set.filter(sort__isnull=False)
         ]
         return self.rqs.order_by(*order_by).values_list(*self._fields_list())
+
+    def get_filters(self):
+        filter_dict = dict([
+            (x['filter'], x['values'])
+            for x in self.filters if x['filter'].method == 'filter'
+        ])
+        return [
+            (x, x.lookup_config, filter_dict.get(x))
+            for x in self.queryset.queryfilter_set.filter(method='filter')
+        ]
+
+    def get_excludes(self):
+        exclude_dict = dict([
+            (x['filter'], x['values'])
+            for x in self.filters if x['filter'].method == 'exclude'
+        ])
+        return [
+            (x, x.lookup_config, exclude_dict.get(x))
+            for x in self.queryset.queryfilter_set.filter(method='exclude')
+        ]
 
     def preview(self, limit=50):
         return self.get_base_qs()[:limit]

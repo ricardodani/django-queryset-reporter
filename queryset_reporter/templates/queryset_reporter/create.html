@@ -23,22 +23,17 @@
     {% if queryset %}    
     <div class="span3">
         <ul class="nav filter-nav">
-            {% if filters %}
-            <li class="nav-header">{% trans "Filtros" %}</li>
-                {% for f in filters %}
-                <li>
-                {% include 'queryset_reporter/filter_fields.html' with filter=f %}
-                </li>
-                {% endfor %}
-            {% endif %}
-            {% if excludes %}
-            <li class="nav-header">{% trans "Exclusões" %}</li>
-                {% for e in excludes %}
-                <li>
-                {% include 'queryset_reporter/filter_fields.html' with filter=e %}
-                </li>
-                {% endfor %}
-            {% endif %}
+
+            <li class="nav-header">{% trans "Filtros" %}<li>
+            {% for filter in reporter.get_filters %}
+            {% include 'queryset_reporter/filter_fields.html' %}
+            {% endfor %}
+            
+            <li class="nav-header">{% trans "Exclusões" %}<li>
+            {% for filter in reporter.get_excludes %}
+            {% include 'queryset_reporter/filter_fields.html' %}
+            {% endfor %}
+
         </ul>
     </div>
     {% endif %}
@@ -91,12 +86,14 @@
             </fieldset>
         </form>
 
+        {% if reporter %}
         <dl>
             <dt>{% trans "Total de resultados" %}</dt>
             <dd>{{ reporter.rqs.count }}</dd>
             <dt>{% trans "Pré-visualização" %}</dt>
             <dd>{{ reporter.preview.count }}</dd>
         </dl>
+        {% endif %}
 
         {% with reporter.preview as preview %}
         {% if preview %}
