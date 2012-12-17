@@ -1,4 +1,5 @@
 {% load i18n %}
+{% if not filter.0.readonly %}
 <li>
     <input type="checkbox" class="pull-left filter-checkbox"
         {% if filter.2 %}checked="checked"{% endif %}
@@ -31,3 +32,4 @@
     {% endfor %}
     </div>
 </li>
+{% endif %}

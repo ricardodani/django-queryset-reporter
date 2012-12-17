@@ -106,6 +106,9 @@ class QueryFilter(FieldedModel):
     method = models.CharField(
         _(u'Método'), choices=FILTER_METHODS, editable=False,
         max_length=max([len(x[0]) for x in FILTER_METHODS]))
+    readonly = models.BooleanField(default=False)
+    value_0 = models.CharField(_(u'Valor padrão 1'), **_CNULL)
+    value_1 = models.CharField(_(u'Valor padrão 2'), **_CNULL)
 
     def __unicode__(self):
         return u'%s por %s' % (self.field_verbose, self.get_lookup_display())

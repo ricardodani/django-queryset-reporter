@@ -8,7 +8,7 @@ import csv
 from datetime import datetime
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from queryset_reporter.models import Queryset
+from queryset_reporter.models import Queryset, QueryFilter
 
 
 class Reporter(object):
@@ -28,19 +28,41 @@ class Reporter(object):
             raise Exception(_(u'Instância de Modelo de Queryset inválida.'))
 
     def _request_filters(self):
-        # selected_filters.
+        self.filters = []
+        # get readonly filters
+        for rof in self.queryset.queryfilter_set.filter(readonly=True):
+            f = {'filter': rof}
+            if rof.value_1:
+                f.update({'values': [rof.value_0, rof.value_1]})
+                self.filters.append(f)
+            elif rof.value_0:
+                f.update({'values': [rof.value_0]})
+                self.filters.append(f)
+
+        # returns the id`s of ``Filters`` objects of the request GET.
+        filter_ids = []
         _rfilter = re.compile(r'^filter-([\d]+)$')
-        self.filters = [
-            {
-                'filter': self.queryset.queryfilter_set.get(id=x),
-                'values': [self.request.GET.get(y) for y in self.request.GET
-                           if y.startswith('filter-%s-' % x)]
-            } for x in [
-                int(_rfilter.match(x).groups()[0])
-                for x in self.request.GET if _rfilter.match(x)
-            ]  # returns the id`s of ``Filters`` objects.
-        ]  # returns a dict with key 'filter' equals the ``Filter`` object and
-        #    the values of the related filter.
+        for x in self.request.GET:
+            match = _rfilter.match(x)
+            if match:
+                filter_ids.append(int(match.groups()[0]))
+
+        # appends to self.filter a dict with key 'filter' equals the
+        # ``Filter`` object and the values of the related filter.
+        for fid in filter_ids:
+            try:
+                _filter = self.queryset.queryfilter_set.get(id=fid)
+            except QueryFilter.DoesNotExist:
+                continue
+            if _filter not in [x['filter'] for x in self.filters]:
+                self.filters.append({
+                    'filter': _filter,
+                    'values': [
+                        self.request.GET.get(v)
+                        for v in self.request.GET
+                        if v.startswith('filter-%s-' % fid)
+                    ]
+                })
 
     def _prepare_vars(self):
         # rsq -> result queryset

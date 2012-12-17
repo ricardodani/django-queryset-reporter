@@ -1,0 +1,3 @@
+#queryset_form input, #queryset_form select {
+    max-width: 120px !important;
+}

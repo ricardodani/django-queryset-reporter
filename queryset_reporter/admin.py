@@ -13,7 +13,8 @@ class DisplayFieldInline(admin.TabularInline):
     inline_classes = ('collapse',)
     sortable_field_name = "position"
     fields = (
-        'field', 'field_verbose', 'field_type', 'model_field', 'sort', 'annotate',
+        'field', 'field_verbose', 'field_type', 'model_field', 'sort',
+        # 'annotate',
         'position'
     )
 
@@ -26,6 +27,7 @@ class FilterInline(admin.TabularInline):
     inline_classes = ('collapse',)
     fields = (
         'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
+        'readonly', 'value_0', 'value_1'
     )
 
 
@@ -37,6 +39,7 @@ class ExcludeInline(admin.TabularInline):
     inline_classes = ('collapse',)
     fields = (
         'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
+        'readonly', 'value_0', 'value_1'
     )
 
 
@@ -52,5 +55,8 @@ class QuerysetAdmin(admin.ModelAdmin):
 
     class Media:
         js = ("queryset_reporter/admin.js",)
+        css = {
+            'all': ("queryset_reporter/admin.css",)
+        }
 
 admin.site.register(Queryset, QuerysetAdmin)
