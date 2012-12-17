@@ -14,8 +14,7 @@ class DisplayFieldInline(admin.TabularInline):
     sortable_field_name = "position"
     fields = (
         'field', 'field_verbose', 'field_type', 'model_field', 'sort',
-        # 'annotate',
-        'position'
+        'annotate', 'position'
     )
 
 

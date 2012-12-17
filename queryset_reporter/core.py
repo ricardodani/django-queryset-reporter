@@ -8,6 +8,7 @@ import csv
 from datetime import datetime
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import aggregates
 from queryset_reporter.models import Queryset, QueryFilter
 
 
@@ -66,7 +67,7 @@ class Reporter(object):
 
     def _prepare_vars(self):
         # rsq -> result queryset
-        self.rqs = self.queryset.model.model_class().objects.all()
+        self._rqs = self.queryset.model.model_class().objects.all()
         # fields -> display fields
         self.fields = self.queryset.displayfield_set.all()
 
@@ -109,25 +110,52 @@ class Reporter(object):
             fvalues = self._clean_values(f['values'], f['filter'].lookup_config)
             if f['filter'].method == u'filter':
                 # append filter method
-                self.rqs = self.rqs.filter(**{flookup: fvalues})
+                self._rqs = self._rqs.filter(**{flookup: fvalues})
             elif f['filter'].method == u'exclude':
                 # append exclude method
-                self.rqs = self.rqs.exclude(**{flookup: fvalues})
+                self._rqs = self._rqs.exclude(**{flookup: fvalues})
+        if self.queryset.distinct:
+            self._rqs = self._rqs.distinct()
 
     def _fields_list(self):
-        return [x.field for x in self.fields]
+        fields_list = []
+        for f in self.fields:
+            if not f.annotate:
+                fields_list.append(f.field)
+        print fields_list
+        return fields_list
 
-    def get_base_qs(self):
+    def _order_by(self):
         # f-> field, s -> sort
         # if sort is 'desc' prepend a `-` in front of `f` string
         sort_field = lambda f, s: (u'-%s' % f) if s == u'desc' else f
         # order_by <- a list of order_by fields with order signals
         # i.e: ['title', '-creation_time']
-        order_by = [
-            sort_field(x.field, x.sort) for x in
+        return [
+            sort_field((
+                x.field if not x.annotate
+                else ('%s_%s' % (x.annotate, x.field)).replace('__', '_')
+            ), x.sort) for x in
             self.queryset.displayfield_set.filter(sort__isnull=False)
         ]
-        return self.rqs.order_by(*order_by).values_list(*self._fields_list())
+
+    def _annotate_dict(self):
+        annot_list = []
+        for x in self.queryset.displayfield_set.filter(annotate__isnull=False):
+            key = ('%s_%s' % (x.annotate, x.field)).replace('__', '_')
+            try:
+                agg_class = getattr(aggregates, x.annotate)
+            except AttributeError:
+                continue
+            else:
+                annot_list.append([key, agg_class(x.field)])
+        return dict(annot_list)
+
+    def get_base_qs(self):
+        order = self._order_by()
+        fields = self._fields_list()
+        annot = self._annotate_dict()
+        return self._rqs.values_list(*fields).annotate(**annot).order_by(*order)
 
     def get_filters(self):
         filter_dict = dict([
@@ -151,6 +179,9 @@ class Reporter(object):
 
     def preview(self, limit=50):
         return self.get_base_qs()[:limit]
+
+    def count(self):
+        return self.get_base_qs().count()
 
     def render_csv(self):
         '''Render a .CSV and return the file_url.
