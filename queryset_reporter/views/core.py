@@ -42,6 +42,7 @@ def create(request):
         'queryset': qs,
         #'checked_filters': filters_ids,
         'reporter': reporter,
+        'request': request,
         'display_fields': qs.displayfield_set.all(),
     })
     return render_page()
