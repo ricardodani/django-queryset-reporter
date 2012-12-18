@@ -122,7 +122,6 @@ class Reporter(object):
         for f in self.fields:
             if not f.annotate:
                 fields_list.append(f.field)
-        print fields_list
         return fields_list
 
     def _order_by(self):
@@ -155,7 +154,10 @@ class Reporter(object):
         order = self._order_by()
         fields = self._fields_list()
         annot = self._annotate_dict()
-        return self._rqs.values_list(*fields).annotate(**annot).order_by(*order)
+        if annot:
+            return self._rqs.values_list(*fields).annotate(**annot).order_by(*order)
+        else:
+            return self._rqs.values_list(*fields).order_by(*order)
 
     def get_filters(self):
         filter_dict = dict([
