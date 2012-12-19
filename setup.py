@@ -17,6 +17,7 @@ setup(
     install_requires=[
         'django >=1.3, <1.4',
         'south',
+        'openpyxl',
         'django-grappelli >=2.3.8, <=2.3.9',
     ],
     classifiers=[

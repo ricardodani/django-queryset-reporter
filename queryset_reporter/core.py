@@ -9,6 +9,7 @@ from datetime import datetime
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import aggregates
+from openpyxl import Workbook
 from queryset_reporter.models import Queryset, QueryFilter
 
 
@@ -185,6 +186,21 @@ class Reporter(object):
     def count(self):
         return self.get_base_qs().count()
 
+    def render_xlsx(self):
+        wb = Workbook(optimized_write=True)
+        ws = wb.create_sheet()
+
+        ws.append(
+            [x.field_verbose for x in self.queryset.displayfield_set.all()])
+        for line in self.get_base_qs():
+            ws.append(line)
+
+        file_name = 'xlsx/%s.xlsx' % uuid.uuid4().hex
+        file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        wb.save(file_path)  # don't forget to save !
+
+        return settings.MEDIA_URL + file_name
+
     def render_csv(self):
         '''Render a .CSV and return the file_url.
         '''
@@ -196,6 +212,11 @@ class Reporter(object):
                 x.field_verbose for x in self.queryset.displayfield_set.all()
             ])
             for line in self.get_base_qs():
-                spamwriter.writerow(line)
+                try:
+                    spamwriter.writerow(line)
+                except UnicodeDecodeError:
+                    spamwriter.writerow([
+                        x.encode('ascii', errors='replace') for x in line
+                    ])
         file_url = settings.MEDIA_URL + file_name
         return file_url

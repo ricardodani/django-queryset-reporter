@@ -1,1 +1,2 @@
+openpyxl
 django-grappelli==2.3.9

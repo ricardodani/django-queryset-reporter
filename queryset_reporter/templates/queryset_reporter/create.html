@@ -15,6 +15,14 @@
 </div>
 {% endif %}
 
+{% if rendered_xlsx %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <h4>{% trans "XLSX gerado" %}</h4>
+  {% trans "Acesse-o através desta URL: " %}<a href="{{ rendered_xlsx }}">{{ rendered_xlsx }}</a>
+</div>
+{% endif %}
+
 <form action="{% url qsr_create %}" method="GET" id="querysets-form">
 {% if queryset %}
 <input type="hidden" value="{{ queryset.id }}" name="queryset" /> 
@@ -63,8 +71,8 @@
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">{% trans "Gerar relatório" %}<span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="?{{ request.META.QUERY_STRING }}&format=csv">CSV</a></li>
+                            <li><a href="?{{ request.META.QUERY_STRING }}&format=xlsx">XLSX</a></li>
                         {% comment %}
-                        <li><a href="?{{ request.META.QUERY_STRING }}&format=xls">XLS</a></li>
                         <li><a href="#">CSV</a></li>
                         <li><a href="#">PDF</a></li>
                         <li><a href="#">HTML</a></li>

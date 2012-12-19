@@ -16,4 +16,4 @@ Github: github.com/ricardodani
 Company: Horizonte Conteúdos LTDA.
 '''
 
-__version__ = '201212181642'
+__version__ = '201212190054'

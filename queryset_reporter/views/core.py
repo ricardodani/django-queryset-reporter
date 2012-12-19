@@ -33,9 +33,9 @@ def create(request):
         context.update({
             'rendered_csv': reporter.render_csv()
         })
-    elif file_format == 'xls':
+    elif file_format == 'xlsx':
         context.update({
-            #'rendered_xls': reporter.render_xls()
+            'rendered_xlsx': reporter.render_xlsx()
         })
 
     context.update({
