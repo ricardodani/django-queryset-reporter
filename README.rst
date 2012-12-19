@@ -4,8 +4,7 @@ queryset_reporter
 description
 -----------
 
-A django pluggable admin-site app for create persisted queryset`s and then
-make reports based on them in various forms of data like pdf`s, xls`s.
+A django pluggable admin-site app for create persisted queryset`s and make reports based on them, in various forms of data like cvs`s, xlsx`s.
 
 url: https://github.com/ricardodani/django-queryset-reporter/
 
@@ -78,14 +77,14 @@ To generation of .csv works, you must define your ``MEDIA_ROOT`` and ``MEDIA_URL
 tested on
 ---------
 
-- django==1.3.1
-- django-grappelli==2.3.9 (i don`t know if works without grappelli, i think it works)
+- django >= 1.3.1 <= 1.3.4
+- django-grappelli==2.3.9 (i don`t know if works without grappelli, but I think it works)
 
 about
 -----
 
 - Author: Ricardo Dani
-- E-mail: ricardod@horizonte.tv.br
+- E-mail: ricardod@horizonte.tv.br / ricardodani@gmail.com
 - Github: github.com/ricardodani
 - Company: Horizonte Conteúdos - Rio de Janeiro / RJ
 
