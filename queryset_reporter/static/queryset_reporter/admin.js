@@ -142,9 +142,6 @@ $(document).ready(function() {
         $name.val($option.val());
         $type.val($option.attr('data-type'));
     });
-    //$('input[type=checkbox]').change(function() {
-    //    alert('checkbox changed!');
-    //});
 });
 
 }(django.jQuery));

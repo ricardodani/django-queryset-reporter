@@ -61,7 +61,7 @@ class Reporter(object):
                     'filter': _filter,
                     'values': [
                         self.request.GET.get(v)
-                        for v in self.request.GET
+                        for v in sorted(self.request.GET)
                         if v.startswith('filter-%s-' % fid)
                     ]
                 })
