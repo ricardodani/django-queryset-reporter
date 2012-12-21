@@ -1,14 +1,14 @@
 queryset_reporter
 =================
 
-description
+Description
 -----------
 
 A django pluggable admin-site app for create persisted queryset`s and make reports based on them, in various forms of data like cvs`s, xlsx`s.
 
-url: https://github.com/ricardodani/django-queryset-reporter/
+Url: https://github.com/ricardodani/django-queryset-reporter/
 
-install
+Install
 -------
 
 Type::
@@ -19,24 +19,28 @@ In your settings.INSTALLED_APPS add::
 
   queryset_reporter
 
-migrate (with you`re using south)::
+Migrate (if you`re using south)::
 
   ./manage.py migrate queryset_reporter
 
-or (if not south)::
+Or (if not south)::
 
   ./manage.py syncdb queryset_reporter
 
-add url`s definitions to your project.urls module::
+Add url`s definitions to your project.urls module::
 
     # Queryset reporter
     url(r'^', include('queryset_reporter.urls')),
 
-add grappelli-dashboard app in your settings.INSTALLED_APPS. Note that must be after 'grappelli'::
+Adding grappelli dashboard to your admin site
+---------------------------------------------
+
+To enable the dashboard of ``queryset_reporter`` in the home of admin, you must add grappelli-dashboard app in your settings.INSTALLED_APPS.
+Note that must be after 'grappelli'::
     
     'grappelli.dashboard',
 
-create a grappelli_dashboard.py to your project like this::
+Create a grappelli_dashboard.py to your project like this::
 
     # -*- encoding: utf-8 -*-
     from django.utils.translation import ugettext_lazy as _
