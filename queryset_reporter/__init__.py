@@ -12,8 +12,7 @@ ideas and codes. :)
 
 Author: Ricardo Dani
 E-mail: ricardod@horizonte.tv.br
-Github: github.com/ricardodani
 Company: Horizonte Conteúdos LTDA.
 '''
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'

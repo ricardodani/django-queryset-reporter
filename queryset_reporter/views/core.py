@@ -19,6 +19,7 @@ def create(request):
     querysets = Queryset.objects.all()
     context = {
         'querysets': querysets,
+        'version': version,
     }
 
     try:
@@ -44,7 +45,6 @@ def create(request):
         #'checked_filters': filters_ids,
         'reporter': reporter,
         'request': request,
-        'version': version,
         'display_fields': qs.displayfield_set.all(),
     })
     return render_page()

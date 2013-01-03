@@ -78,6 +78,17 @@ And then, in your settings::
 
 To generation of .csv works, you must define your ``MEDIA_ROOT`` and ``MEDIA_URL`` settings directives.
 
+Configure some settings variables::
+
+    # Default: Django Queryset Reporter
+    QR_TITLE = u'Default Title (big)'
+    
+    # Default: Queryset Reporter
+    QR_HEADER_TITLE = u'Title'
+
+    # Default: https://github.com/ricardodani/django-queryset-reporter
+    QR_FOOTER_LINK = u'http://footer.link/' 
+
 tested on
 ---------
 
