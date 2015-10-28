@@ -3,13 +3,13 @@
 import re
 import os
 import uuid
-import codecs
-import csv
 from datetime import datetime
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import aggregates
 from openpyxl import Workbook
+
 from queryset_reporter.models import Queryset, QueryFilter
 
 
@@ -19,7 +19,7 @@ class Reporter(object):
     obtain another queryset based on ``Queryset`` metadada.
     '''
 
-    def __init__(self, queryset, request):
+    def __init__(self, queryset, request=None):
         if isinstance(queryset, Queryset):
             self.queryset = queryset
             self.request = request
@@ -42,33 +42,35 @@ class Reporter(object):
                 self.filters.append(f)
 
         # returns the id`s of ``Filters`` objects of the request GET.
-        filter_ids = []
-        _rfilter = re.compile(r'^filter-([\d]+)$')
-        for x in self.request.GET:
-            match = _rfilter.match(x)
-            if match:
-                filter_ids.append(int(match.groups()[0]))
+        if self.request:
+            filter_ids = []
+            _rfilter = re.compile(r'^filter-([\d]+)$')
+            for x in self.request.GET:
+                match = _rfilter.match(x)
+                if match:
+                    filter_ids.append(int(match.groups()[0]))
 
-        # appends to self.filter a dict with key 'filter' equals the
-        # ``Filter`` object and the values of the related filter.
-        for fid in filter_ids:
-            try:
-                _filter = self.queryset.queryfilter_set.get(id=fid)
-            except QueryFilter.DoesNotExist:
-                continue
-            if _filter not in [x['filter'] for x in self.filters]:
-                self.filters.append({
-                    'filter': _filter,
-                    'values': [
-                        self.request.GET.get(v)
-                        for v in sorted(self.request.GET)
-                        if v.startswith('filter-%s-' % fid)
-                    ]
-                })
+            # appends to self.filter a dict with key 'filter' equals the
+            # ``Filter`` object and the values of the related filter.
+            for fid in filter_ids:
+                try:
+                    _filter = self.queryset.queryfilter_set.get(id=fid)
+                except QueryFilter.DoesNotExist:
+                    continue
+                if _filter not in [x['filter'] for x in self.filters]:
+                    self.filters.append({
+                        'filter': _filter,
+                        'values': [
+                            self.request.GET.get(v)
+                            for v in sorted(self.request.GET)
+                            if v.startswith('filter-%s-' % fid)
+                        ]
+                    })
 
     def _prepare_vars(self):
         # rsq -> result queryset
-        self._rqs = self.queryset.model.model_class().objects.all()
+        model_class = self.queryset.model.model_class()
+        self._rqs = model_class.objects.all()
         # fields -> display fields
         self.fields = self.queryset.displayfield_set.all()
 
@@ -156,29 +158,33 @@ class Reporter(object):
         fields = self._fields_list()
         annot = self._annotate_dict()
         if annot:
-            return self._rqs.values_list(*fields).annotate(**annot).order_by(*order)
+            return self._rqs.values(*fields).annotate(**annot).order_by(*order)
         else:
-            return self._rqs.values_list(*fields).order_by(*order)
+            return self._rqs.values(*fields).order_by(*order)
 
-    def get_filters(self):
+    def _get_queryfilters(self, method):
+        '''
+        Returns a list of ``queryfilter``s of the queryset with the kind of
+        the given ``method`` (possible values is `filter` or `exclude`).
+        '''
+        if method not in ('filter', 'exclude'):
+            raise Exception(
+                'Invalid ``method`` argument, must be `filter` or `exclude`.'
+            )
         filter_dict = dict([
             (x['filter'], x['values'])
-            for x in self.filters if x['filter'].method == 'filter'
+            for x in self.filters if x['filter'].method == method
         ])
         return [
             (x, x.lookup_config, filter_dict.get(x))
-            for x in self.queryset.queryfilter_set.filter(method='filter')
+            for x in self.queryset.queryfilter_set.filter(method=method)
         ]
 
+    def get_filters(self):
+        return self._get_queryfilters('filter')
+
     def get_excludes(self):
-        exclude_dict = dict([
-            (x['filter'], x['values'])
-            for x in self.filters if x['filter'].method == 'exclude'
-        ])
-        return [
-            (x, x.lookup_config, exclude_dict.get(x))
-            for x in self.queryset.queryfilter_set.filter(method='exclude')
-        ]
+        return self._get_queryfilters('exclude')
 
     def preview(self, limit=50):
         return self.get_base_qs()[:limit]
@@ -193,30 +199,17 @@ class Reporter(object):
         ws.append(
             [x.field_verbose for x in self.queryset.displayfield_set.all()])
         for line in self.get_base_qs():
-            ws.append(line)
+            _list = []
+            for field in self.fields:
+                _list.append(
+                    u'%s%s%s' % (field.pre_concatenate,
+                                 line.get(field.get_field),
+                                 field.pos_concatenate)
+                )
+            ws.append(_list)
 
         file_name = 'xlsx/%s.xlsx' % uuid.uuid4().hex
         file_path = os.path.join(settings.MEDIA_ROOT, file_name)
         wb.save(file_path)  # don't forget to save !
 
         return settings.MEDIA_URL + file_name
-
-    def render_csv(self):
-        '''Render a .CSV and return the file_url.
-        '''
-        file_name = 'csvs/%s.csv' % uuid.uuid4().hex
-        file_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        with codecs.open(file_path, 'wb', 'utf-8') as csvfile:
-            spamwriter = csv.writer(csvfile, strict=True)
-            spamwriter.writerow([
-                x.field_verbose for x in self.queryset.displayfield_set.all()
-            ])
-            for line in self.get_base_qs():
-                try:
-                    spamwriter.writerow(line)
-                except UnicodeDecodeError:
-                    spamwriter.writerow([
-                        x.encode('ascii', errors='replace') for x in line
-                    ])
-        file_url = settings.MEDIA_URL + file_name
-        return file_url

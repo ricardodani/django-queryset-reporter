@@ -2,9 +2,7 @@
  * admin.js
  *
  * Author: Ricardo Dani
- * E-mail: ricardodani@gmail.com
- * Github: github.com/ricardodani
- * Twitter: @ricardodani
+ * E-mail: ricardo@horizonte.tv.br
  * */
 
 (function($) {
@@ -12,7 +10,7 @@
 
 function option(val, verbose, type, selected) {
     /*
-     * Return a <option> with value, verbose and selected bool.
+     * Return a $(<option>) with value, verbose and selected bool.
      * */
     var selected = selected || false;
     var $opt = $('<option>');
@@ -24,7 +22,6 @@ function option(val, verbose, type, selected) {
     if (type != null) {
         $opt.attr('data-type', type)
     }
-    // returns a <option> jQuery object with the give `val` and `verbose`.
     return $opt;
 }
 
@@ -40,21 +37,29 @@ function populate_model_data($inline_item) {
      * with a given $inline_item (jQuery object of a inline item)
      * populate the <select> `model_field` with the metadata located in
      * windows.queryset_reporter.model_data
+     * accepts only 2 levels of recursion.
+     * TODO: make this n-recursive
      * */
     var model_field = $inline_item.find('.introspect-model_field');
     var data = window.queryset_reporter.model_data;
-    console.log(data);
     if (data.success) {
         $.each(data.fields, function (i, field) {
             model_field.append(option(field.name, field.verbose, field.type));
-            if (typeof field.lookup_fields != 'undefined') {
-                $.each(field.lookup_fields, function (j, lfield) {
-                    //model_field.append(option(field.name, field.verbose));
-                    var lf_name = field.name + '__'  + lfield.name;
-                    var lf_verbose = field.verbose + ' -> ' + lfield.verbose;
-                    model_field.append(option(lf_name, lf_verbose, lfield.type));
-                });
-            }
+            handle_lookup_fields(model_field, field, field.name, field.verbose);
+        });
+    }
+}
+
+function handle_lookup_fields(model_field, field, field_name_prefix, field_verbose_prefix) {
+
+    var lookup_fields = field.lookup_fields;
+    if (typeof lookup_fields != 'undefined') {
+        console.log('Looking up for field '+field.name);
+        $.each(lookup_fields, function (l, lfield) {
+            var lf_name = field_name_prefix + '__'  + lfield.name;
+            var lf_verbose = field_verbose_prefix + ' -> ' + lfield.verbose;
+            model_field.append(option(lf_name, lf_verbose, lfield.type));
+            handle_lookup_fields(model_field, lfield, lf_name, lf_verbose);
         });
     }
 }

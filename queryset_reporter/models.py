@@ -7,7 +7,8 @@ Models of queryset_reporter.
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
+from django.conf import settings as sett
+
 from queryset_reporter import mapping
 
 _NULL = {'null': True, 'blank': True}
@@ -24,12 +25,13 @@ class Queryset(models.Model):
         # TODO: make a model to handle this. To only permit models. The
         # rest is forbiden
         models = ContentType.objects.all()
-        if getattr(settings, 'QUERYSET_REPORTER_INCLUDE', False):
-            models = models.filter(name__in=settings.QUERYSET_REPORTER_INCLUDE)
-        if getattr(settings, 'QUERYSET_REPORTER_EXCLUDE', False):
-            models = models.exclude(name__in=settings.QUERYSET_REPORTER_EXCLUDE)
+        if getattr(sett, 'QUERYSET_REPORTER_INCLUDE', False):
+            models = models.filter(name__in=sett.QUERYSET_REPORTER_INCLUDE)
+        if getattr(sett, 'QUERYSET_REPORTER_EXCLUDE', False):
+            models = models.exclude(name__in=sett.QUERYSET_REPORTER_EXCLUDE)
         return models
 
+    # metadata
     name = models.CharField(_(u'Nome'), **_CHAR)
     desc = models.TextField(_(u'Descrição'), **_CHAR)
     model = models.ForeignKey(
@@ -39,8 +41,19 @@ class Queryset(models.Model):
         Útil quando relatórios que acessam muitas tabelas tem a possibilidade
         de retornar resultados repetidos, marcar este campo desabilita a
         repetição.'''), default=False)
+
+    # timestamps
     created_at = models.DateTimeField(_(u'Criação'), auto_now_add=True)
     modified_at = models.DateTimeField(_(u'Modificação'), auto_now=True)
+
+    # automatic generation
+    automatic_generation = models.BooleanField(
+        _(u'Geração Automática'), default=False)
+    last_automatic_generation_at = models.DateTimeField(
+        _(u'Última geração automática'), editable=False, **_NULL)
+    last_automatic_generation_xlsx = models.CharField(
+        _(u'Último relatório gerado em XLSX'), max_length=250,
+        editable=False, **_NULL)
 
     def __unicode__(self):
         return u'[%s] %s' % (self.model.name, self.name)
@@ -80,8 +93,22 @@ class DisplayField(FieldedModel):
     )
     position = models.PositiveSmallIntegerField(**_NULL)
 
+    pre_concatenate = models.CharField(
+        verbose_name=_(u'Pré concatenação'), **_CNULL
+    )
+    pos_concatenate = models.CharField(
+        verbose_name=_(u'Pós concatenação'), **_CNULL
+    )
+
     def __unicode__(self):
         return self.field_verbose
+
+    @property
+    def get_field(self):
+        if not self.annotate:
+            return self.field
+        else:
+            return '%s_%s' % (self.annotate, self.field.replace('__', '_'))
 
     class Meta:
         verbose_name = _(u'Campo a exibir')

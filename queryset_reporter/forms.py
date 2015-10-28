@@ -3,7 +3,9 @@
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
 from queryset_reporter.models import Filter, Exclude, DisplayField
+
 
 # Defaults to True, if False, `fie1d`, `field_verbose`, `field_type` are
 # displayed in admin.
