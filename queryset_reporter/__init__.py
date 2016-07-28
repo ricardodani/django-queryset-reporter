@@ -14,4 +14,4 @@ Author: Ricardo Dani
 E-mail: ricardod@horizonte.tv.br
 Company: Horizonte Conteúdos LTDA.
 '''
-__version__ = '1.4.0'
+__version__ = '1.4.1'
