@@ -24,7 +24,7 @@
 </div>
 {% endif %}
 
-<form action="{% url qsr_create %}" method="GET" id="querysets-form">
+<form action="{% url 'qsr_create' %}" method="GET" id="querysets-form">
 {% if reporter.queryset %}
 <input type="hidden" value="{{ reporter.queryset.id }}" name="queryset" /> 
 {% endif %}
@@ -70,8 +70,8 @@
                 <div class="btn-group">
                     <button class="btn dropdown-toggle" data-toggle="dropdown">{% trans "Ação" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a href="{% url qsr_create %}?queryset={{ reporter.queryset.pk }}">{% trans "Zerar filtros" %}</a></li>
-                    <li><a href="{% url qsr_create %}">{% trans "Selecionar outro modelo" %}</a></li>
+                        <li><a href="{% url 'qsr_create' %}?queryset={{ reporter.queryset.pk }}">{% trans "Zerar filtros" %}</a></li>
+                    <li><a href="{% url 'qsr_create' %}">{% trans "Selecionar outro modelo" %}</a></li>
                     </ul>
                 </div><!-- /btn-group -->
                 <div class="btn-group">
