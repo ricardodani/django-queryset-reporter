@@ -47,14 +47,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </a>
-        <a class="brand" href="#">Queryset Reporter</a>
+        <a class="brand" href="{% url 'qsr_create' %}">Queryset Reporter</a>
         <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
             Logged in as <a href="#" class="navbar-link">{{ user }}</a>
             </p>
             <ul class="nav">
-                <li class="active"><a href="{% url qsr_create %}">Criar relatório</a></li>
-                <li><a href="{% url admin:queryset_reporter_queryset_changelist %}">Administrar modelos</a></li>
+                <li class="active"><a href="{% url 'qsr_create' %}">Criar relatório</a></li>
+                <li><a href="{% url 'admin:queryset_reporter_queryset_changelist' %}">Administrar modelos</a></li>
             </ul>
         </div>
         </div>

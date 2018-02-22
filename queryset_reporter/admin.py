@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from django.contrib import admin
+
 from queryset_reporter.models import Queryset, Filter, Exclude, DisplayField
 from queryset_reporter.forms import DisplayFieldForm, FilterForm, ExcludeForm
 
@@ -14,7 +15,7 @@ class DisplayFieldInline(admin.TabularInline):
     sortable_field_name = "position"
     fields = (
         'field', 'field_verbose', 'field_type', 'model_field', 'sort',
-        'annotate', 'position'
+        'annotate', 'position', 'pre_concatenate', 'pos_concatenate'
     )
 
 
@@ -43,12 +44,15 @@ class ExcludeInline(admin.TabularInline):
 
 
 class QuerysetAdmin(admin.ModelAdmin):
-    list_display = ('name', 'model', 'distinct', 'created_at', 'modified_at')
-    list_filter = ('model', 'created_at', 'modified_at', 'distinct')
+    list_display = ('name', 'model', 'distinct', 'created_at', 'modified_at',
+        'automatic_generation', 'last_automatic_generation_at')
+    list_filter = ('model', 'created_at', 'modified_at', 'distinct',
+        'automatic_generation')
     inlines = (DisplayFieldInline, FilterInline, ExcludeInline)
     fieldsets = (
         ('Dados básicos', {
-            'fields': ('name', 'desc', 'model', 'distinct')
+            'fields': ('name', 'desc', 'model', 'distinct',
+                'automatic_generation')
         }),
     )
 
