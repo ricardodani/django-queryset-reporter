@@ -1,11 +1,10 @@
-# -*- encoding: utf-8 -*-
-
 from django.db.models.fields.related import RelatedField
-from django.db.models.related import RelatedObject
 from django.conf import settings
 
 _DEFAULT_RECURSION_DEPTH = 2
-_MAX_RECURSION_DEPTH = getattr(settings, 'QUERY_SET_REPORT_MAX_RECURSIVE_DEPTH', _DEFAULT_RECURSION_DEPTH)
+_MAX_RECURSION_DEPTH = getattr(
+    settings, 'QUERYSET_REPORTER_MAX_RECURSION_DEPTH', _DEFAULT_RECURSION_DEPTH
+)
 
 def _direct_field(field, recursion_depth=0):
 
@@ -57,7 +56,8 @@ def field_meta(field, field_name, recursion_depth=0):
         # If the field is direct, means that it can be a ForeigKey,
         # ManyToManyField or a <?>Field (? = Char, Integer, ...)
         return _direct_field(field[0], recursion_depth)
-    elif isinstance(field[0], RelatedObject):
+    #elif isinstance(field[0], RelatedObject):
+    elif field[0].__class__.__name__ == 'RelatedObject':
         return _related_object(field[0], field_name, recursion_depth)
     else:
         None
@@ -74,6 +74,7 @@ def get_model_fields(model, recursion_depth=0):
 
     fields = []
     recursion_depth += 1
+    breakpoint()
     for field_name in model._meta.get_all_field_names():
         # print '\t' * (recursion_depth - 1), 'field_name', field_name, 'recusion_depth', recursion_depth
         # get_field_by_name(field_name) -> Returns the (field_object, model,

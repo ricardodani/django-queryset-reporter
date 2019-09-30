@@ -1,7 +1,4 @@
-# -*- encoding: utf-8 -*-
-
 from django.contrib import admin
-
 from queryset_reporter.models import Queryset, Filter, Exclude, DisplayField
 from queryset_reporter.forms import DisplayFieldForm, FilterForm, ExcludeForm
 

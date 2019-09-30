@@ -46,13 +46,25 @@ class DisplayFieldForm(FieldedModelForm):
 
     class Meta:
         model = DisplayField
+        fields = [
+            'queryset', 'field', 'field_verbose', 'field_type', 'model_field',
+            'sort', 'annotate', 'position', 'pre_concatenate', 'pos_concatenate'
+        ]
 
 
 class FilterForm(FieldedModelForm):
     class Meta:
         model = Filter
+        fields = [
+            'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
+            'readonly', 'value_0', 'value_1'
+        ]
 
 
 class ExcludeForm(FieldedModelForm):
     class Meta:
         model = Exclude
+        fields = [
+            'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
+            'readonly', 'value_0', 'value_1'
+        ]

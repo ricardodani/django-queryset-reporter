@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-
 from queryset_reporter import __version__
 from distutils.core import setup
 from setuptools import find_packages
@@ -15,10 +12,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'django >=1.3, <1.5',
-        'south',
         'openpyxl',
-        'django-grappelli >=2.3.8, <=2.4.10',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

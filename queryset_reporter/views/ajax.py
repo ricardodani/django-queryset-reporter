@@ -1,11 +1,9 @@
-# -*- encoding: utf-8 -*-
-
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse
-from django.utils.simplejson import dumps
+from json import dumps
 from django.contrib.contenttypes.models import ContentType
-from queryset_reporter.introspect import get_model_fields
 from django.contrib.auth.decorators import permission_required
+from django.http import HttpResponse
+from django.utils.translation import ugettext as _
+from queryset_reporter.introspect import get_model_fields
 
 
 def json_response(obj):
@@ -39,7 +37,7 @@ def model_fields(request):
 
     return json_response({
         'success': True,
-        'model': unicode(model),
+        'model': str(model),
         'model_verbose': model._meta.verbose_name.format('%s'),
         'fields': get_model_fields(model),
     })

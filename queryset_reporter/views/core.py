@@ -1,13 +1,11 @@
-# -*- encoding: utf-8 -*-
-
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
 from queryset_reporter.models import Queryset
 from queryset_reporter.core import Reporter
-from django.contrib.auth.decorators import permission_required
 from queryset_reporter import __version__ as version
 
 
-@permission_required('is_staff')
+#@permission_required('is_staff')
 def create(request):
     '''
     View to create report`s.

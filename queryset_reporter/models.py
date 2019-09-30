@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 '''
 Models of queryset_reporter.
 '''
@@ -36,7 +34,9 @@ class Queryset(models.Model):
     desc = models.TextField(_(u'Descrição'), **_CHAR)
     model = models.ForeignKey(
         ContentType, verbose_name=_(u'Modelo'),
-        limit_choices_to={'pk__in': _get_allowed_models})
+        limit_choices_to={'pk__in': _get_allowed_models()},
+        on_delete=models.CASCADE
+    )
     distinct = models.BooleanField(_(u'Distinguir'), help_text=_(u'''
         Útil quando relatórios que acessam muitas tabelas tem a possibilidade
         de retornar resultados repetidos, marcar este campo desabilita a
@@ -64,7 +64,7 @@ class Queryset(models.Model):
 
 
 class FieldedModel(models.Model):
-    queryset = models.ForeignKey(Queryset)
+    queryset = models.ForeignKey(Queryset, on_delete=models.CASCADE)
     field = models.CharField(_(u'Código do Campo'), **_CHAR)
     field_verbose = models.CharField(_(u'Nome do Campo'), **_CHAR)
     field_type = models.CharField(_(u'Tipo do Campo'), **_CHAR)
@@ -100,7 +100,7 @@ class DisplayField(FieldedModel):
         verbose_name=_(u'Pós concatenação'), **_CNULL
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.field_verbose
 
     @property
@@ -137,8 +137,8 @@ class QueryFilter(FieldedModel):
     value_0 = models.CharField(_(u'Valor padrão 1'), **_CNULL)
     value_1 = models.CharField(_(u'Valor padrão 2'), **_CNULL)
 
-    def __unicode__(self):
-        return u'%s por %s' % (self.field_verbose, self.get_lookup_display())
+    def __str__(self):
+        return '%s por %s' % (self.field_verbose, self.get_lookup_display())
 
     @property
     def lookup_config(self):
@@ -155,7 +155,7 @@ class QueryFilter(FieldedModel):
 
     class Meta:
         verbose_name = _(u'Filtro de query')
-        verbose_name = _(u'Filtros de query`s')
+        verbose_name_plural = _(u'Filtros de query`s')
 
 
 class FilterManager(models.Manager):
