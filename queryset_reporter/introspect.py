@@ -1,48 +1,15 @@
-from django.db.models.fields.related import RelatedField
 from django.conf import settings
+from django.db.models.fields.reverse_related import ManyToOneRel
 
 _DEFAULT_RECURSION_DEPTH = 2
 _MAX_RECURSION_DEPTH = getattr(
     settings, 'QUERYSET_REPORTER_MAX_RECURSION_DEPTH', _DEFAULT_RECURSION_DEPTH
 )
 
-def _direct_field(field, recursion_depth=0):
 
-    field_metadata = {
-        'name': field.name,
-        'verbose': field.verbose_name.format('%s'),
-        'type': field.__class__.__name__,
-    }
-    # verify if it`s a RelatedField
-    if (isinstance(field, RelatedField) and
-            recursion_depth > _MAX_RECURSION_DEPTH):
-        return None
-    elif isinstance(field, RelatedField):
-        # means that the field is OneToOneField, ManyToMany or a ForeignKey
-        field_metadata.update({
-            'lookup_fields': get_model_fields(
-                field.rel.to, recursion_depth=recursion_depth
-            ),
-        })
-    return field_metadata
-
-
-def _related_object(field, field_name, recursion_depth=0):
-    # for a non direct fields
-    assert field.__class__.__name__ == 'RelatedObject'
-    related_object = {
-        'name': field_name,
-        'verbose': field_name,
-        'type': field.__class__.__name__,
-    }
-    if recursion_depth <= _MAX_RECURSION_DEPTH:
-        related_object.update({
-            'lookup_fields': get_model_fields(
-                field.field.model, recursion_depth=recursion_depth
-            ),
-        })
-    return related_object
-
+# (Pdb) model._meta.related_objects
+# (<ManyToOneRel: animals.animal>,)
+# HAS_LOOKUP_FIELDS = (ManyToOneRel)
 
 def field_meta(field, field_name, recursion_depth=0):
     '''
@@ -50,18 +17,26 @@ def field_meta(field, field_name, recursion_depth=0):
     fields, if exist.
     '''
 
-    # First verify if `field` is direct or no
+    try:
+        verbose_name = field.verbose_name
+    except AttributeError: # ManyToOneRel
+        verbose_name = field.name.capitalize()
 
-    if field[2]:
-        # If the field is direct, means that it can be a ForeigKey,
-        # ManyToManyField or a <?>Field (? = Char, Integer, ...)
-        return _direct_field(field[0], recursion_depth)
-    #elif isinstance(field[0], RelatedObject):
-    elif field[0].__class__.__name__ == 'RelatedObject':
-        return _related_object(field[0], field_name, recursion_depth)
-    else:
-        None
-
+    related_object = {
+        'name': field_name,
+        'verbose': verbose_name,
+        'type': str(type(field)),
+    }
+    if (
+        recursion_depth <= _MAX_RECURSION_DEPTH and
+        isinstance(field, ManyToOneRel)
+    ):
+        related_object.update({
+            'lookup_fields': get_model_fields(
+                field.field.model, recursion_depth=recursion_depth
+            ),
+        })
+    return related_object
 
 def get_model_fields(model, recursion_depth=0):
     '''
@@ -74,18 +49,10 @@ def get_model_fields(model, recursion_depth=0):
 
     fields = []
     recursion_depth += 1
+
     breakpoint()
-    for field_name in model._meta.get_all_field_names():
-        # print '\t' * (recursion_depth - 1), 'field_name', field_name, 'recusion_depth', recursion_depth
-        # get_field_by_name(field_name) -> Returns the (field_object, model,
-        # direct, m2m), where field_object is the Field instance for the given
-        # name, model is the model containing this field (None for local
-        # fields), direct is True if the field exists on this model, and m2m
-        # is True for many-to-many relations. When 'direct' is False,
-        # 'field_object' is the corresponding RelatedObject for this field
-        # (since the field doesn't have an instance associated with it).
-        field = model._meta.get_field_by_name(field_name)
-        f = field_meta(field, field_name, recursion_depth)
+    for field in model._meta.get_fields():
+        f = field_meta(field, recursion_depth)
         if f:
             fields.append(f)
     return fields

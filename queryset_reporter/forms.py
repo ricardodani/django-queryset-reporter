@@ -16,9 +16,9 @@ else:
     _widget = forms.TextInput
 
 
-class FieldedModelForm(forms.ModelForm):
+class FieldModelForm(forms.ModelForm):
     '''
-    A model form that`s hidden field and field_verbose with a HiddenInput
+    A ModelForm that hiddens `field and field_verbose with a HiddenInput
     widget and add`s a `model_field` ChoiceField to the form.
     '''
 
@@ -39,7 +39,7 @@ class FieldedModelForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'introspect-model_field'}))
 
 
-class DisplayFieldForm(FieldedModelForm):
+class DisplayFieldForm(FieldModelForm):
     position = forms.IntegerField(required=False, widget=forms.HiddenInput(
         attrs={'class': 'field'}
     ))
@@ -52,7 +52,7 @@ class DisplayFieldForm(FieldedModelForm):
         ]
 
 
-class FilterForm(FieldedModelForm):
+class FilterForm(FieldModelForm):
     class Meta:
         model = Filter
         fields = [
@@ -61,7 +61,7 @@ class FilterForm(FieldedModelForm):
         ]
 
 
-class ExcludeForm(FieldedModelForm):
+class ExcludeForm(FieldModelForm):
     class Meta:
         model = Exclude
         fields = [

@@ -37,7 +37,7 @@
             {% for filter in reporter.get_filters %}
             {% include 'queryset_reporter/filter_fields.html' %}
             {% endfor %}
-            
+
             <li class="nav-header">{% trans "Exclusões" %}<li>
             {% for filter in reporter.get_excludes %}
             {% include 'queryset_reporter/filter_fields.html' %}

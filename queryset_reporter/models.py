@@ -59,11 +59,11 @@ class Queryset(models.Model):
         return u'[%s] %s' % (self.model.name, self.name)
 
     class Meta:
-        verbose_name = _(u'Modelo de Relatório')
-        verbose_name_plural = _(u'Modelos de Relatórios')
+        verbose_name = _(u'Modelo de Queryset')
+        verbose_name_plural = _(u'Modelos de Queryset')
 
 
-class FieldedModel(models.Model):
+class FieldModel(models.Model):
     queryset = models.ForeignKey(Queryset, on_delete=models.CASCADE)
     field = models.CharField(_(u'Código do Campo'), **_CHAR)
     field_verbose = models.CharField(_(u'Nome do Campo'), **_CHAR)
@@ -73,7 +73,7 @@ class FieldedModel(models.Model):
         abstract = True
 
 
-class DisplayField(FieldedModel):
+class DisplayField(FieldModel):
     '''Or the Fields and Extras selects called in .values().
     '''
 
@@ -116,7 +116,7 @@ class DisplayField(FieldedModel):
         ordering = ['position']
 
 
-class QueryFilter(FieldedModel):
+class QueryFilter(FieldModel):
     '''
     QueryFilter of a Queryset
     '''
@@ -166,7 +166,7 @@ class FilterManager(models.Manager):
 
 class Filter(QueryFilter):
     '''
-    Filter is a proxy model of QueryFilter to handle a .filter()
+    Filter is a proxy model of QueryFilter to handle a .filtesr()
     '''
 
     objects = FilterManager()

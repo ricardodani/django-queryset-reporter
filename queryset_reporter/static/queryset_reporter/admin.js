@@ -7,7 +7,6 @@
 
 (function($) {
 // django jquery namespace
-
 function option(val, verbose, type, selected) {
     /*
      * Return a $(<option>) with value, verbose and selected bool.
@@ -122,7 +121,7 @@ $(document).ready(function() {
     $('#queryset_form #id_model').change(function(event) {
         var model = $(this);
         if (model.val().length > 0) {
-            var url = '/queryset_reporter/ajax/model-fields/';
+            var url = '/qr/ajax/model-fields';
             $.getJSON(url, {model: model.val()}, function(data) {
                 // first, sets the model_data in a global object
                 window.queryset_reporter = {model_data: data}
@@ -149,4 +148,4 @@ $(document).ready(function() {
     });
 });
 
-}(django.jQuery));
+}($));

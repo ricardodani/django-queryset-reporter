@@ -20,12 +20,18 @@ class Class(_BaseModel):
 
     phylum = models.CharField(**_CHAR)
 
+    class Meta:
+        verbose_name_plural = 'Classes'
+
 
 class Family(_BaseModel):
     '''Family like Canidae'''
 
     family_class = models.ForeignKey(Class, **_FKEY)
     order_name = models.CharField(**_CHAR)
+
+    class Meta:
+        verbose_name_plural = 'Families'
 
 
 class Specie(_BaseModel):
