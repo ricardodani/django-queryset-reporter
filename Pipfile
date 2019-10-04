@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 openpyxl = "*"
-django-grappelli = "==2.3.9"
 django = "*"
 pillow = "*"
 
