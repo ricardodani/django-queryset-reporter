@@ -33,7 +33,7 @@ Migrate `queryset_reporter`` tables:
 Add url's definitions to your **project.urls** module:
 
 ```python
-path('', include('queryset_reporter.urls')),
+path('qr/', include('queryset_reporter.urls')),
 ```
 
 ```python
