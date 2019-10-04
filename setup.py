@@ -1,35 +1,42 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
-
+import pathlib
 from queryset_reporter import __version__
-from distutils.core import setup
-from setuptools import find_packages
+from setuptools import setup, find_packages
+
+
+HERE = pathlib.Path(__file__).parent
+
+README = (HERE / "README.md").read_text()
 
 setup(
     name='queryset_reporter',
     version=__version__,
     url='http://github.com/ricardodani/django-queryset-reporter',
     author='Ricardo Dani',
-    author_email='ricardod@horizonte.tv.br',
-    description=u'App to generate Querysets and Reports based on them.',
-    packages=find_packages(),
+    author_email='ricardodani@gmail.com',
+    description=u'App that creates models of Queryset and generate reports',
+    long_description=README,
+    long_description_content_type="text/markdown",
     include_package_data=True,
-    install_requires=[
-        'django >=1.3, <1.5',
-        'south',
-        'openpyxl',
-        'django-grappelli >=2.3.8, <=2.4.10',
-    ],
+    install_requires=['openpyxl'],
+    packages=find_packages(),
+    python_requires=">3.5",
+    license="GPL",
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Environment :: Console',
         'Environment :: Web Environment',
+        'Framework :: Django',
+        'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
+        'Framework :: Django :: 2.2',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Python Software Foundation License',
-        'Operating System :: MacOS :: MacOS X',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: POSIX',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Software Development',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3 :: Only',
+        'Topic :: Internet :: WWW/HTTP',
     ],
 )

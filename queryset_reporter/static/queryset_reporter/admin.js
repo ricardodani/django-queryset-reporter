@@ -5,9 +5,7 @@
  * E-mail: ricardo@horizonte.tv.br
  * */
 
-(function($) {
 // django jquery namespace
-
 function option(val, verbose, type, selected) {
     /*
      * Return a $(<option>) with value, verbose and selected bool.
@@ -54,7 +52,6 @@ function handle_lookup_fields(model_field, field, field_name_prefix, field_verbo
 
     var lookup_fields = field.lookup_fields;
     if (typeof lookup_fields != 'undefined') {
-        console.log('Looking up for field '+field.name);
         $.each(lookup_fields, function (l, lfield) {
             var lf_name = field_name_prefix + '__'  + lfield.name;
             var lf_verbose = field_verbose_prefix + ' -> ' + lfield.verbose;
@@ -92,7 +89,8 @@ function model_field_populate_by_inline(index, value) {
      * for the model_field <select>, selecting what are equal to the hidden
      * `field`.
      */
-    var inline_itens = $('#'+value+'_set-group div[id^='+value+'_set]');
+    var selector = '.dynamic-' + value + '_set';
+    var inline_itens = $(selector);
 
     // iterate through each form
     inline_itens.each(function(index, inline_item) {
@@ -108,7 +106,7 @@ function model_field_populate() {
      * with an array of inline`s names, for each of them, execute the 
      * function `model_field_defaults_by_inline`, responsable for 
      * */
-    var inlines = $(['displayfield', 'filter', 'exclude']);
+    var inlines = $(['displayfield', 'queryfilter']);
     inlines.each(model_field_populate_by_inline);
 }
 
@@ -122,7 +120,7 @@ $(document).ready(function() {
     $('#queryset_form #id_model').change(function(event) {
         var model = $(this);
         if (model.val().length > 0) {
-            var url = '/queryset_reporter/ajax/model-fields/';
+            var url = '/qr/ajax/model-fields';
             $.getJSON(url, {model: model.val()}, function(data) {
                 // first, sets the model_data in a global object
                 window.queryset_reporter = {model_data: data}
@@ -147,6 +145,11 @@ $(document).ready(function() {
         $name.val($option.val());
         $type.val($option.attr('data-type'));
     });
-});
 
-}(django.jQuery));
+    /*
+     * Whean adding a inline, intercept's the click and sync values with model field loaded data
+     * */
+    $('#queryset_form .add-row a').live('click', function(event) {
+        model_field_populate();
+    });
+});

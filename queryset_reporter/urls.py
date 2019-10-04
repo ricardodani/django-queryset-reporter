@@ -1,20 +1,13 @@
-# -*- encoding: utf-8 -*-
-
-from django.conf.urls import patterns, url
-
+from django.urls import path
 from queryset_reporter.views.ajax import model_fields
 from queryset_reporter.views.core import create
 
-urlpatterns = patterns(
-    '',
-    # AJAX VIEWS
-    url(
-        r'^queryset_reporter/ajax/model-fields/$',
-        model_fields, name='qsr_ajax-model-fields'
-    ),
-    url(
-        r'^queryset_reporter/create/$',
-        create, name='qsr_create'
-    ),
 
-)
+urlpatterns = [
+    path(
+        'ajax/model-fields', model_fields, name='qsr_ajax-model-fields'
+    ),
+    path(
+        'create', create, name='qsr_create'
+    ),
+]

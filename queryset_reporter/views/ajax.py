@@ -1,18 +1,8 @@
-# -*- encoding: utf-8 -*-
-
-from django.utils.translation import ugettext as _
-from django.http import HttpResponse
-from django.utils.simplejson import dumps
 from django.contrib.contenttypes.models import ContentType
-from queryset_reporter.introspect import get_model_fields
 from django.contrib.auth.decorators import permission_required
-
-
-def json_response(obj):
-    '''Returns serialized json response based on a pythonic object
-    (dict, str, tuple, list).
-    '''
-    return HttpResponse(dumps(obj), mimetype='application/json')
+from django.http import JsonResponse
+from django.utils.translation import ugettext as _
+from queryset_reporter.introspect import get_model_fields
 
 
 @permission_required('is_staff')
@@ -25,21 +15,21 @@ def model_fields(request):
     try:
         ctype = ContentType.objects.get(pk=request.GET.get('model'))
     except ContentType.DoesNotExist:
-        return json_response({
+        return JsonResponse({
             'success': False, 'error': _(u'Modelo inexiste.')})
     except ValueError:
-        return json_response({
+        return JsonResponse({
             'success': False, 'error': _(u'Identificador do modelo inválido')})
 
     model = ctype.model_class()
     if not model:
-        return json_response({
+        return JsonResponse({
             'success': False, 'error': _(u'Modelo abstrato.')
         })
 
-    return json_response({
+    return JsonResponse({
         'success': True,
-        'model': unicode(model),
+        'model': str(model),
         'model_verbose': model._meta.verbose_name.format('%s'),
         'fields': get_model_fields(model),
     })

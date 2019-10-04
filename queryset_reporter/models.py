@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 '''
 Models of queryset_reporter.
 '''
@@ -7,9 +5,10 @@ Models of queryset_reporter.
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings as sett
+from django.urls import reverse
 
 from queryset_reporter import mapping
+from queryset_reporter import settings
 
 _NULL = {'null': True, 'blank': True}
 _CHAR = {'max_length': 255, 'blank': False}
@@ -22,25 +21,28 @@ class Queryset(models.Model):
     '''
 
     def _get_allowed_models():
-        # TODO: make a model to handle this. To only permit models. The
-        # rest is forbiden
+        '''Return allowed models based on project settings.
+        '''
         models = ContentType.objects.all()
-        if getattr(sett, 'QUERYSET_REPORTER_INCLUDE', False):
-            models = models.filter(name__in=sett.QUERYSET_REPORTER_INCLUDE)
-        if getattr(sett, 'QUERYSET_REPORTER_EXCLUDE', False):
-            models = models.exclude(name__in=sett.QUERYSET_REPORTER_EXCLUDE)
-        return models
+        if settings.QUERYSET_REPORTER_INCLUDE_APPS:
+            models = models.filter(
+                app_label__in=settings.QUERYSET_REPORTER_INCLUDE_APPS
+            )
+        if settings.QUERYSET_REPORTER_EXCLUDE_APPS:
+            models = models.exclude(
+                app_label__in=settings.QUERYSET_REPORTER_EXCLUDE_APPS
+            )
+        return list(models.values_list('pk', flat=True))
 
     # metadata
     name = models.CharField(_(u'Nome'), **_CHAR)
     desc = models.TextField(_(u'Descrição'), **_CHAR)
     model = models.ForeignKey(
         ContentType, verbose_name=_(u'Modelo'),
-        limit_choices_to={'pk__in': _get_allowed_models})
-    distinct = models.BooleanField(_(u'Distinguir'), help_text=_(u'''
-        Útil quando relatórios que acessam muitas tabelas tem a possibilidade
-        de retornar resultados repetidos, marcar este campo desabilita a
-        repetição.'''), default=False)
+        limit_choices_to={'pk__in': _get_allowed_models()},
+        on_delete=models.CASCADE
+    )
+    distinct = models.BooleanField(_(u'Distinguir'), default=False)
 
     # timestamps
     created_at = models.DateTimeField(_(u'Criação'), auto_now_add=True)
@@ -55,16 +57,20 @@ class Queryset(models.Model):
         _(u'Último relatório gerado em XLSX'), max_length=250,
         editable=False, **_NULL)
 
-    def __unicode__(self):
-        return u'[%s] %s' % (self.model.name, self.name)
+    def __str__(self):
+        return f'[{self.model.name}] {self.name}'
 
     class Meta:
-        verbose_name = _(u'Modelo de Relatório')
-        verbose_name_plural = _(u'Modelos de Relatórios')
+        verbose_name = _(u'Modelo de Queryset')
+        verbose_name_plural = _(u'Modelos de Queryset')
+
+    def get_absolute_url(self):
+        path = reverse('qsr_create')
+        return f'{path}?queryset={self.id}'
 
 
-class FieldedModel(models.Model):
-    queryset = models.ForeignKey(Queryset)
+class FieldModel(models.Model):
+    queryset = models.ForeignKey(Queryset, on_delete=models.CASCADE)
     field = models.CharField(_(u'Código do Campo'), **_CHAR)
     field_verbose = models.CharField(_(u'Nome do Campo'), **_CHAR)
     field_type = models.CharField(_(u'Tipo do Campo'), **_CHAR)
@@ -73,7 +79,7 @@ class FieldedModel(models.Model):
         abstract = True
 
 
-class DisplayField(FieldedModel):
+class DisplayField(FieldModel):
     '''Or the Fields and Extras selects called in .values().
     '''
 
@@ -100,7 +106,7 @@ class DisplayField(FieldedModel):
         verbose_name=_(u'Pós concatenação'), **_CNULL
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.field_verbose
 
     @property
@@ -116,7 +122,7 @@ class DisplayField(FieldedModel):
         ordering = ['position']
 
 
-class QueryFilter(FieldedModel):
+class QueryFilter(FieldModel):
     '''
     QueryFilter of a Queryset
     '''
@@ -131,14 +137,15 @@ class QueryFilter(FieldedModel):
         _(u'Tipo de filtro'), max_length=max([len(x[0]) for x in LOOKUPS]),
         choices=LOOKUPS)
     method = models.CharField(
-        _(u'Método'), choices=FILTER_METHODS, editable=False,
-        max_length=max([len(x[0]) for x in FILTER_METHODS]))
+        _(u'Método'), choices=FILTER_METHODS,
+        max_length=max([len(x[0]) for x in FILTER_METHODS])
+    )
     readonly = models.BooleanField(default=False)
     value_0 = models.CharField(_(u'Valor padrão 1'), **_CNULL)
     value_1 = models.CharField(_(u'Valor padrão 2'), **_CNULL)
 
-    def __unicode__(self):
-        return u'%s por %s' % (self.field_verbose, self.get_lookup_display())
+    def __str__(self):
+        return '%s por %s' % (self.field_verbose, self.get_lookup_display())
 
     @property
     def lookup_config(self):
@@ -155,58 +162,4 @@ class QueryFilter(FieldedModel):
 
     class Meta:
         verbose_name = _(u'Filtro de query')
-        verbose_name = _(u'Filtros de query`s')
-
-
-class FilterManager(models.Manager):
-    def get_query_set(self):
-        qs = super(FilterManager, self).get_query_set()
-        return qs.filter(method='filter')
-
-
-class Filter(QueryFilter):
-    '''
-    Filter is a proxy model of QueryFilter to handle a .filter()
-    '''
-
-    objects = FilterManager()
-
-    def __init__(self, *args, **kwargs):
-        self.method = 'filter'
-        super(Filter, self).__init__(*args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        self.method = 'filter'
-        super(Filter, self).save(*args, **kwargs)
-
-    class Meta:
-        proxy = True
-        verbose_name = _(u'Filtro')
-        verbose_name_plural = _(u'Filtros')
-
-
-class ExcludeManager(models.Manager):
-    def get_query_set(self):
-        qs = super(ExcludeManager, self).get_query_set()
-        return qs.filter(method='exclude')
-
-
-class Exclude(QueryFilter):
-    '''
-    Exclude is a proxy model of QueryFilter to handle a .exclude()
-    '''
-
-    objects = ExcludeManager()
-
-    def __init__(self, *args, **kwargs):
-        self.method = 'exclude'
-        super(Exclude, self).__init__(*args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        self.method = 'exclude'
-        super(Exclude, self).save(*args, **kwargs)
-
-    class Meta:
-        proxy = True
-        verbose_name = _(u'Exclusão')
-        verbose_name_plural = _(u'Exclusões')
+        verbose_name_plural = _(u'Filtros de query`s')

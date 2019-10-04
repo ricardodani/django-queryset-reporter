@@ -1,9 +1,6 @@
-# -*- encoding: utf-8 -*-
-
 from django.contrib import admin
-
-from queryset_reporter.models import Queryset, Filter, Exclude, DisplayField
-from queryset_reporter.forms import DisplayFieldForm, FilterForm, ExcludeForm
+from queryset_reporter.models import Queryset, QueryFilter, DisplayField
+from queryset_reporter.forms import DisplayFieldForm, QueryFilterForm
 
 
 class DisplayFieldInline(admin.TabularInline):
@@ -19,28 +16,12 @@ class DisplayFieldInline(admin.TabularInline):
     )
 
 
-class FilterInline(admin.TabularInline):
-    model = Filter
-    form = FilterForm
+class QueryFilterInline(admin.TabularInline):
+    model = QueryFilter
+    form = QueryFilterForm
     extra = 0
     classes = ('collapse open',)
     inline_classes = ('collapse',)
-    fields = (
-        'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
-        'readonly', 'value_0', 'value_1'
-    )
-
-
-class ExcludeInline(admin.TabularInline):
-    model = Exclude
-    form = ExcludeForm
-    extra = 0
-    classes = ('collapse open',)
-    inline_classes = ('collapse',)
-    fields = (
-        'field', 'field_verbose', 'field_type', 'model_field', 'lookup',
-        'readonly', 'value_0', 'value_1'
-    )
 
 
 class QuerysetAdmin(admin.ModelAdmin):
@@ -48,16 +29,14 @@ class QuerysetAdmin(admin.ModelAdmin):
         'automatic_generation', 'last_automatic_generation_at')
     list_filter = ('model', 'created_at', 'modified_at', 'distinct',
         'automatic_generation')
-    inlines = (DisplayFieldInline, FilterInline, ExcludeInline)
-    fieldsets = (
-        ('Dados básicos', {
-            'fields': ('name', 'desc', 'model', 'distinct',
-                'automatic_generation')
-        }),
-    )
+    inlines = (DisplayFieldInline, QueryFilterInline)
+    fields = ('name', 'desc', 'model', 'distinct', 'automatic_generation')
 
     class Media:
-        js = ("queryset_reporter/admin.js",)
+        js = (
+            "queryset_reporter/admin.js",
+            "https://code.jquery.com/jquery-1.4.4.min.js"
+        )
         css = {
             'all': ("queryset_reporter/admin.css",)
         }
