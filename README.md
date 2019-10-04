@@ -14,19 +14,16 @@ Install
 Type:
 
 ```bash
-   pip install queryset_reporter
+pip install queryset_reporter
 ```
 
 In your **settings** add:
 
 ```python
-  INSTALLED_APPS += ['queryset_reporter']
-
-  #This variable represent how depth we will go into the models to set the fields as searchable fields. Default is 2.
-  QUERY_SET_REPORT_MAX_RECURSIVE_DEPTH = 3
+INSTALLED_APPS += ['queryset_reporter']
 ```
 
-Migrate queryset_reporter tables:
+Migrate `queryset_reporter`` tables:
 
 ```bash
 ./manage.py migrate

@@ -6,4 +6,4 @@ u'''
 Author: Ricardo Dani
 E-mail: ricardodani@gmail.com
 '''
-__version__ = '2.0.0'
+__version__ = '2.0.1'
