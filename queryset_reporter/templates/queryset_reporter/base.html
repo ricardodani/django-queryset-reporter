@@ -11,18 +11,6 @@
     <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'bootstrap/css/datepicker.css' %}" rel="stylesheet">
     <link href="{% static 'queryset_reporter/queryset_reporter.css' %}" rel="stylesheet">
-    {% block extra-style %}
-    <style type="text/css">
-        body {
-        padding-top: 50px;
-        padding-bottom: 40px;
-        }
-        .sidebar-nav {
-        padding: 9px 0;
-        }
-    </style>
-    {% endblock %}
-    <link rel="shortcut icon" href="{% static 'bootstrap/ico/favicon.ico' %}">
 </head>
 <body>
     {% block navigation %}
@@ -34,13 +22,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </a>
-        <a class="brand" href="{% url 'qsr_create' %}">Queryset Reporter</a>
+        <a class="brand" href="{% url 'queryset_reporter:qr_create' %}">Queryset Reporter</a>
         <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
             Logged in as <a href="#" class="navbar-link">{{ user }}</a>
             </p>
             <ul class="nav">
-                <li class="active"><a href="{% url 'qsr_create' %}">Criar relatório</a></li>
+                <li class="active"><a href="{% url 'queryset_reporter:qr_create' %}">Criar relatório</a></li>
             </ul>
         </div>
         </div>

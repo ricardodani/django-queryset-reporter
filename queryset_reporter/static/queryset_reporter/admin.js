@@ -2,7 +2,7 @@
  * admin.js
  *
  * Author: Ricardo Dani
- * E-mail: ricardo@horizonte.tv.br
+ * E-mail: ricardodani@gmail.com
  * */
 
 // django jquery namespace
@@ -120,7 +120,7 @@ $(document).ready(function() {
     $('#queryset_form #id_model').change(function(event) {
         var model = $(this);
         if (model.val().length > 0) {
-            var url = '/qr/ajax/model-fields';
+            var url = window.QR_API_MODELFIELDS_URL;
             $.getJSON(url, {model: model.val()}, function(data) {
                 // first, sets the model_data in a global object
                 window.queryset_reporter = {model_data: data}
@@ -150,6 +150,7 @@ $(document).ready(function() {
      * Whean adding a inline, intercept's the click and sync values with model field loaded data
      * */
     $('#queryset_form .add-row a').live('click', function(event) {
+        console.log('teste')
         model_field_populate();
     });
 });

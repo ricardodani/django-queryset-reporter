@@ -84,3 +84,5 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/admin/login/'

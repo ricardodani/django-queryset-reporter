@@ -2,7 +2,7 @@
  * reporter.js
  *
  * Author: Ricardo Dani
- * E-mail: ricardod@horizonte.tv.br
+ * E-mail: ricardodani@gmail.com
  * */
 
 $(document).ready(function() {

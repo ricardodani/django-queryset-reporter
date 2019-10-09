@@ -3,5 +3,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('qr/', include('queryset_reporter.urls')),
+    path('', include('queryset_reporter.urls')),
 ]
