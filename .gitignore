@@ -193,3 +193,4 @@ target/
 __pycache__/
 local_settings.py
 
+example_project/media

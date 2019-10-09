@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import re
 import os
 import uuid
@@ -27,7 +25,7 @@ class Reporter(object):
             self._prepare_vars()
             self._filters()
         else:
-            raise Exception(_(u'Instância de Modelo de Queryset inválida.'))
+            raise Exception(_('Instância de Modelo de Queryset inválida.'))
 
     def _request_filters(self):
         self.filters = []
@@ -193,7 +191,7 @@ class Reporter(object):
         return self.get_base_qs().count()
 
     def render_xlsx(self):
-        wb = Workbook(optimized_write=True)
+        wb = Workbook()
         ws = wb.create_sheet()
 
         ws.append(
@@ -207,9 +205,8 @@ class Reporter(object):
                                  field.pos_concatenate)
                 )
             ws.append(_list)
-
         file_name = 'xlsx/%s.xlsx' % uuid.uuid4().hex
         file_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        wb.save(file_path)  # don't forget to save !
+        wb.save(file_path)
 
         return settings.MEDIA_URL + file_name
