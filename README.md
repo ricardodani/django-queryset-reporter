@@ -20,10 +20,13 @@ pip install queryset_reporter
 In your **settings** add:
 
 ```python
-INSTALLED_APPS += ['queryset_reporter']
+INSTALLED_APPS = [
+    # ...
+    'queryset_reporter',
+]
 ```
 
-Migrate `queryset_reporter`` tables:
+Migrate `queryset_reporter`` models:
 
 ```bash
 ./manage.py migrate
@@ -33,7 +36,7 @@ Migrate `queryset_reporter`` tables:
 Add url's definitions to your **project.urls** module:
 
 ```python
-path('qr/', include('queryset_reporter.urls')),
+path('path-of-choice/', include('queryset_reporter.urls')),
 ```
 
 Tested on
