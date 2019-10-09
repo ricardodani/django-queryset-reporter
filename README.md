@@ -36,17 +36,6 @@ Add url's definitions to your **project.urls** module:
 path('', include('queryset_reporter.urls')),
 ```
 
-```python
-# Default: Django Queryset Reporter
-QR_TITLE = u'Default Title (big)'
-
-# Default: Queryset Reporter
-QR_HEADER_TITLE = u'Title'
-
-# Default: https://github.com/ricardodani/django-queryset-reporter
-QR_FOOTER_LINK = u'http://footer.link/'
-````
-
 Tested on
 ---------
 
@@ -63,4 +52,4 @@ About
 License
 -------
 
-GPL
+MIT

@@ -20,7 +20,7 @@ setup(
     install_requires=['openpyxl'],
     packages=find_packages(),
     python_requires=">3.5",
-    license="GPL",
+    license="MIT",
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
