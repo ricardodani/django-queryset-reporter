@@ -199,11 +199,14 @@ class Reporter(object):
         for line in self.get_base_qs():
             _list = []
             for field in self.fields:
-                _list.append(
-                    u'%s%s%s' % (field.pre_concatenate,
-                                 line.get(field.get_field),
-                                 field.pos_concatenate)
+                pre_concat = (
+                    field.pre_concatenate if field.pre_concatenate else ''
                 )
+                pos_concat = (
+                    field.pos_concatenate if field.pos_concatenate else ''
+                )
+                line_value = line.get(field.get_field)
+                _list.append(f'{pre_concat}{line_value}{pos_concat}')
             ws.append(_list)
         file_name = 'xlsx/%s.xlsx' % uuid.uuid4().hex
         file_path = os.path.join(settings.MEDIA_ROOT, file_name)
