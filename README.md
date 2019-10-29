@@ -39,8 +39,17 @@ Add url's definitions to your **project.urls** module:
 path('path-of-choice/', include('queryset_reporter.urls')),
 ```
 
+Permissions
+-----------
+
+You should add `queryset_reporter.can_use_reports` to regular users that you want to access the report view/creation page.
+
+
 Example project credentials
 ---------------------------
+
+In order to test the project, there's a Example project with a pre defined database that you can use right away.
+Here's the credentials:
 
 Admin user:
 ```
