@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
-u'''
+'''
 `queryset_reporter`
 
 Author: Ricardo Dani
-E-mail: ricardodani@gmail.com
+github.com/ricardodani/django-queryset-reporter
 '''
-__version__ = '2.0.6'
+__version__ = '2.1.0'

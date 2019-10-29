@@ -134,7 +134,7 @@ $(document).ready(function() {
      * For every change in the `model_field` of the inlines.
      * Copies the <select> information to `field`, `field_verbose` and `field_type`.
      * */
-    $('#queryset_form .introspect-model_field').change(function(event) {
+    $('#queryset_form .introspect-model_field').live('change', function(event) {
         var $model_field = $(this);
         var $option = $model_field.find('option:selected');
         var $div_parent = $model_field.parent().parent();
@@ -150,7 +150,6 @@ $(document).ready(function() {
      * Whean adding a inline, intercept's the click and sync values with model field loaded data
      * */
     $('#queryset_form .add-row a').live('click', function(event) {
-        console.log('teste')
         model_field_populate();
     });
 });
