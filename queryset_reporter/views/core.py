@@ -1,11 +1,14 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import (
+    permission_required, login_required
+)
 from django.shortcuts import render
 from queryset_reporter.models import Queryset
 from queryset_reporter.core import Reporter
 from queryset_reporter import __version__ as version
 
 
-@permission_required('is_staff')
+@login_required
+@permission_required('queryset_reporter.can_use_reports')
 def create(request):
     '''
     View to create report`s.
@@ -21,7 +24,9 @@ def create(request):
     }
 
     try:
-        qs = Queryset.objects.get(pk=request.GET.get('queryset'))
+        qs = Queryset.objects.get(
+            pk=request.GET.get('queryset')
+        )
     except Queryset.DoesNotExist:
         return render_page()
 

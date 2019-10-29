@@ -63,6 +63,9 @@ class Queryset(models.Model):
     class Meta:
         verbose_name = _(u'Modelo de Queryset')
         verbose_name_plural = _(u'Modelos de Queryset')
+        permissions = (
+            ('can_use_reports', 'Prever e gerar relatórios'),
+        )
 
     def get_absolute_url(self):
         path = reverse('qr_create')

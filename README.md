@@ -39,6 +39,20 @@ Add url's definitions to your **project.urls** module:
 path('path-of-choice/', include('queryset_reporter.urls')),
 ```
 
+Example project credentials
+---------------------------
+
+Admin user:
+```
+User: admin - Pass: 123
+```
+
+Common user:
+```
+User: tester - Pass: asdfghjklç
+```
+
+
 Tested on
 ---------
 
