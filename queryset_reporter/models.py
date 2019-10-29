@@ -65,7 +65,7 @@ class Queryset(models.Model):
         verbose_name_plural = _(u'Modelos de Queryset')
 
     def get_absolute_url(self):
-        path = reverse('qsr_create')
+        path = reverse('qr_create')
         return f'{path}?queryset={self.id}'
 
 
