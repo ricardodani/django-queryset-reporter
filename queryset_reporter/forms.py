@@ -28,8 +28,8 @@ class FieldModelForm(forms.ModelForm):
 
     field_verbose = forms.CharField(
         label=_(u'Apelido do campo'), required=True,
-        widget=get_widget_input(
-            {'class': 'introspect-field_verbose'}
+        widget=forms.TextInput(
+            attrs={'class': 'introspect-field_verbose'}
         )
     )
 
