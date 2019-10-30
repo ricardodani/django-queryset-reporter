@@ -1,7 +1,9 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
-from queryset_reporter.models import DisplayField, QueryFilter
+from floppyforms.widgets import Input as Input
+from queryset_reporter.models import (
+    DisplayField, QueryFilter, Queryset, get_allowed_models
+)
 from queryset_reporter import settings
 
 
@@ -13,6 +15,15 @@ def get_widget_input(attrs):
         return forms.HiddenInput(attrs=attrs)
     else:
         return forms.TextInput(attrs=attrs)
+
+
+class QuerysetForm(forms.ModelForm):
+    class Meta:
+        fields = ('name', 'desc', 'model', 'distinct', 'automatic_generation')
+        model = Queryset
+        widgets = {
+            'model': Input(datalist=get_allowed_models())
+        }
 
 
 class FieldModelForm(forms.ModelForm):

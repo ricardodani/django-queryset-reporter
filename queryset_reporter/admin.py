@@ -1,6 +1,8 @@
 from django.contrib import admin
 from queryset_reporter.models import Queryset, QueryFilter, DisplayField
-from queryset_reporter.forms import DisplayFieldForm, QueryFilterForm
+from queryset_reporter.forms import (
+    DisplayFieldForm, QueryFilterForm, QuerysetForm
+)
 
 
 class DisplayFieldInline(admin.TabularInline):
@@ -25,13 +27,14 @@ class QueryFilterInline(admin.TabularInline):
 
 
 class QuerysetAdmin(admin.ModelAdmin):
-    change_form_template = 'admin/queryset_reporter_change_form.html'
+    # change_form_template = 'admin/queryset_reporter_change_form.html'
     list_display = ('name', 'model', 'distinct', 'created_at', 'modified_at',
         'automatic_generation', 'last_automatic_generation_at')
     list_filter = ('model', 'created_at', 'modified_at', 'distinct',
         'automatic_generation')
     inlines = (DisplayFieldInline, QueryFilterInline)
     fields = ('name', 'desc', 'model', 'distinct', 'automatic_generation')
+    form = QuerysetForm
 
     class Media:
         js = (

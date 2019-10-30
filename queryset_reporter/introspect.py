@@ -10,6 +10,7 @@ _MAX_RECURSION_DEPTH = getattr(
 
 
 def get_class_name(object):
+    # return type(object).__name__
     return object.__class__.__name__
 
 

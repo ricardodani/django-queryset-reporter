@@ -18,6 +18,7 @@ INSTALLED_APPS = [
 
     'animals',
     'queryset_reporter',
+    'floppyforms',
 ]
 
 MIDDLEWARE = [

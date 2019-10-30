@@ -10,6 +10,7 @@ ipdb = "*"
 openpyxl = "*"
 django = "*"
 pillow = "*"
+django-floppyforms = "*"
 
 [requires]
 python_version = "3.7"
