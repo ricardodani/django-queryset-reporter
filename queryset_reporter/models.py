@@ -68,7 +68,7 @@ class Queryset(models.Model):
         )
 
     def get_absolute_url(self):
-        path = reverse('qr_create')
+        path = reverse('queryset_reporter:qr_create')
         return f'{path}?queryset={self.id}'
 
 
