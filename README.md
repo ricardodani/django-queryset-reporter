@@ -39,6 +39,15 @@ Add url's definitions to your **project.urls** module:
 path('path-of-choice/', include('queryset_reporter.urls')),
 ```
 
+Development
+-----------
+
+To build the angular client, go to `client` directory and then:
+
+```bash
+ng build --prod --output-path ../queryset_reporter/static/angular --output-hasing none
+```
+
 Permissions
 -----------
 
