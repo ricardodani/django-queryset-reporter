@@ -1,0 +1,18 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <base href="/">
+        <title>Django Queryset Reporter{% block title %}{% endblock %}</title>
+        {% include "queryset_reporter/metatags.html" %}
+        <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}"></head>
+        <link rel="stylesheet" href="{% static 'angular/styles.css' %}"></head>
+    </head>
+    <body>
+        <app-root></app-root>
+    </body>
+    <script type="text/javascript" src="{% static 'angular/runtime.js' %}"></script>
+    <script type="text/javascript" src="{% static 'angular/polyfills.js' %}"></script>
+    <script type="text/javascript" src="{% static 'angular/main.js' %}"></script>
+</html>
+

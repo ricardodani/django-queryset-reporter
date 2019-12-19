@@ -57,6 +57,13 @@ class Queryset(models.Model):
         _(u'Último relatório gerado em XLSX'), max_length=250,
         editable=False, **_NULL)
 
+    def get_fields(self):
+        return list(
+            self.displayfield_set.values(
+                'field', 'field_verbose', 'field_type'
+            )
+        )
+
     def __str__(self):
         return f'[{self.model.name}] {self.name}'
 

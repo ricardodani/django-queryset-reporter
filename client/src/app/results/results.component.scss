@@ -1,0 +1,8 @@
+.form-group {
+    text-align: center;
+    .form-control option {
+        .has_value {
+            font-weight: bolder;
+        }
+    }
+}

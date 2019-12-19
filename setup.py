@@ -17,7 +17,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    install_requires=['openpyxl'],
+    install_requires=['openpyxl', 'djangorestframework'],
     packages=find_packages(),
     python_requires=">3.5",
     license="MIT",

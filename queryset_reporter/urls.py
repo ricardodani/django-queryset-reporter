@@ -1,18 +1,44 @@
 from django.urls import path
-from queryset_reporter.views.ajax import model_fields
-from queryset_reporter.views.core import create
+from queryset_reporter.views.api import (
+    QuerysetListCreateView,
+    QuerysetResultView,
+    QuerysetRetrieveUpdateDestroyView,
+    DisplayFieldListCreateView,
+    DisplayFieldRetrieveUpdateDestroyView,
+    QueryFilterListCreateView,
+    QueryFilterRetrieveUpdateDestroyView
+)
+from queryset_reporter.views.core import index
 
 
-app_name = 'queryset_reporter'
 urlpatterns = [
     path(
-        'api/model-fields', model_fields, name='qr_api_modelfields'
+        'api/querysets/',
+        QuerysetListCreateView.as_view()
     ),
     path(
-        '', create, name='qr_create'
+        'api/querysets/<int:queryset_id>/',
+        QuerysetRetrieveUpdateDestroyView.as_view()
     ),
-    # path(
-        # '', RedirectView.as_view(pattern_name='queryset_reporter:qr_create'),
-        # name='qr_index'
-    # ),
+    path(
+        'api/querysets/<int:queryset_id>/results/',
+        QuerysetResultView.as_view()
+    ),
+    path(
+        'api/querysets/<int:queryset_id>/fields/',
+        DisplayFieldListCreateView.as_view()
+    ),
+    path(
+        'api/querysets/<int:queryset_id>/fields/<int:filter_id>',
+        DisplayFieldRetrieveUpdateDestroyView.as_view()
+    ),
+    path(
+        'api/querysets/<int:queryset_id>/filters/',
+        QueryFilterListCreateView.as_view()
+    ),
+    path(
+        'api/querysets/<int:queryset_id>/filters/<int:filter_id>',
+        QueryFilterRetrieveUpdateDestroyView.as_view()
+    ),
+    path('', index, name='qr_index'),
 ]

@@ -9,6 +9,15 @@ from queryset_reporter import __version__ as version
 
 @login_required
 @permission_required('queryset_reporter.can_use_reports')
+def index(request):
+    '''
+    View to create report`s.
+    '''
+    return render(request, 'queryset_reporter/index.html', dict())
+
+
+@login_required
+@permission_required('queryset_reporter.can_use_reports')
 def create(request):
     '''
     View to create report`s.

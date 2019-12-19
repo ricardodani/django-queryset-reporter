@@ -151,7 +151,7 @@ class Reporter(object):
                 annot_list.append([key, agg_class(x.field)])
         return dict(annot_list)
 
-    def get_base_qs(self):
+    def get_queryset(self):
         order = self._order_by()
         fields = self._fields_list()
         annot = self._annotate_dict()
@@ -165,10 +165,6 @@ class Reporter(object):
         Returns a list of ``queryfilter``s of the queryset with the kind of
         the given ``method`` (possible values is `filter` or `exclude`).
         '''
-        if method not in ('filter', 'exclude'):
-            raise Exception(
-                'Invalid ``method`` argument, must be `filter` or `exclude`.'
-            )
         filter_dict = dict([
             (x['filter'], x['values'])
             for x in self.filters if x['filter'].method == method
@@ -185,10 +181,10 @@ class Reporter(object):
         return self._get_queryfilters('exclude')
 
     def preview(self, limit=50):
-        return self.get_base_qs()[:limit]
+        return self.get_queryset()[:limit]
 
     def count(self):
-        return self.get_base_qs().count()
+        return self.get_queryset().count()
 
     def render_xlsx(self):
         wb = Workbook()
@@ -196,7 +192,7 @@ class Reporter(object):
 
         ws.append(
             [x.field_verbose for x in self.queryset.displayfield_set.all()])
-        for line in self.get_base_qs():
+        for line in self.get_queryset():
             _list = []
             for field in self.fields:
                 pre_concat = (
