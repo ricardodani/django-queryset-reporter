@@ -45,7 +45,7 @@ Development
 To build the angular client, go to `client` directory and then:
 
 ```bash
-ng build --prod --output-path ../queryset_reporter/static/angular --output-hasing none
+ng build --prod --watch
 ```
 
 Permissions

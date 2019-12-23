@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { QuerysetService } from '../services/queryset.service'
 
 @Component({
   selector: 'app-queryset',
@@ -7,9 +9,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class QuerysetComponent implements OnInit {
 
-  constructor() { }
+  public queryset;
+
+  constructor(
+    private _querysetService: QuerysetService,
+    private _route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
+    console.log(this._route);
   }
 
 }

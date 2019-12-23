@@ -27,17 +27,20 @@ class QuerysetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class QuerysetResultView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
+    def get_model_queryset(self, id_):
         try:
-            model_queryset = Queryset.objects.get(id=kwargs['queryset_id'])
+            return Queryset.objects.get(id=id_)
         except Queryset.DoesNotExist:
             raise exceptions.NotFound
+
+    def get(self, request, *args, **kwargs):
+        model_queryset = self.get_model_queryset(kwargs['queryset_id'])
         queryset = Reporter(model_queryset, self.request).get_queryset()
         fields = model_queryset.get_fields()
         result_serializer = QuerysetResultSerializer(
             data=list(queryset),
+            fields=fields,
             many=True,
-            fields=model_queryset.get_fields()
         )
         result_serializer.is_valid(raise_exception=True)
         return response.Response(dict(
@@ -50,12 +53,13 @@ class BaseQuerysetMixin:
     queryset_url_kwarg = 'queryset_id'
     def get_queryset(self, *args, **kwargs):
         return self._queryset.filter(
-            queryset=kwargs[self.queryset_url_kwargs]
+            queryset=self.kwargs[self.queryset_url_kwarg]
         )
 
 
 class DisplayFieldListCreateView(
-    generics.ListCreateAPIView, BaseQuerysetMixin
+    BaseQuerysetMixin,
+    generics.ListCreateAPIView
 ):
     _queryset = DisplayField.objects.all()
     permissions_classes = [permissions.IsAuthenticated]
@@ -63,7 +67,8 @@ class DisplayFieldListCreateView(
 
 
 class DisplayFieldRetrieveUpdateDestroyView(
-    generics.RetrieveUpdateDestroyAPIView, BaseQuerysetMixin
+    BaseQuerysetMixin,
+    generics.RetrieveUpdateDestroyAPIView
 ):
     _queryset = DisplayField.objects.all()
     permissions_classes = [permissions.IsAuthenticated]
@@ -72,7 +77,7 @@ class DisplayFieldRetrieveUpdateDestroyView(
 
 
 class QueryFilterListCreateView(
-    generics.ListCreateAPIView, BaseQuerysetMixin
+    BaseQuerysetMixin, generics.ListCreateAPIView
 ):
     _queryset = QueryFilter.objects.all()
     permissions_classes = [permissions.IsAuthenticated]
@@ -80,7 +85,8 @@ class QueryFilterListCreateView(
 
 
 class QueryFilterRetrieveUpdateDestroyView(
-    generics.RetrieveUpdateDestroyAPIView, BaseQuerysetMixin
+    BaseQuerysetMixin,
+    generics.RetrieveUpdateDestroyAPIView
 ):
     _queryset = QueryFilter.objects.all()
     permissions_classes = [permissions.IsAuthenticated]

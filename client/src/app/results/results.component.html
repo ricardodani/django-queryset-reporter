@@ -29,29 +29,91 @@
     </h2>
   </div>
 
-  <div class="d-flex justify-content-center" *ngIf="loadingQueryset">
-    <div class="spinner-border" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
-  </div>
+  <ngb-accordion #acc="ngbAccordion" activeIds="resultsPanel">
+    <ngb-panel id="filtersPanel">
+      <ng-template ngbPanelTitle>Filters</ng-template>
 
-  <div class="d-flex" *ngIf="!loadingQueryset && querysetResponse">
-    <table class="table table-striped table-hover table-sm">
-      <thead>
-        <tr>
-          <th *ngFor="let field of querysetResponse.fields" scope="col">
-            {{ field['field_verbose'] }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let row of querysetResponse.result">
-        <td *ngFor="let field of querysetResponse.fields">
-          {{ row[field['field']] }}
-        </td>
-      </tr>
-      </tbody>
-    </table>
+      <ng-template ngbPanelContent>
 
-  </div>
+        <table class="table-responsive table-sm table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col"><input type="checkbox"></th>
+              <th scope="col" colspan="2">Field name</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <th><input type="checkbox" disabled="disabled" selected="selected" checked="checked" /></th>
+              <td>Mandatory filter</td>
+              <td>
+                <form>
+                  <div class="form-row">
+                    <div class="col">
+                      <label class="col-form-label-sm">It's between</label>
+                      <input type="text" class="form-control form-control-sm" placeholder="First name">
+                    </div>
+                    <div class="col">
+                      <label class="col-form-label-sm">and</label>
+                      <input type="text" class="form-control form-control-sm" placeholder="First name">
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+
+            <tr>
+              <th><input type="checkbox" selected="selected" /></th>
+              <td>Mandatory filter</td>
+              <td>
+                <form>
+                  <div class="form-row">
+                    <div class="col">
+                      <label class="col-form-label-sm">Is greater than</label>
+                      <input type="text" class="form-control form-control-sm" placeholder="First name">
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-template>
+
+    </ngb-panel>
+    <ngb-panel id="resultsPanel">
+      <ng-template ngbPanelTitle>Results</ng-template>
+
+      <ng-template ngbPanelContent>
+        <div class="d-flex justify-content-center" *ngIf="loadingQueryset">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+
+        <div class="d-flex" *ngIf="!loadingQueryset && querysetResponse">
+          <table class="table-responsive table-striped table-hover table-sm">
+            <thead>
+              <tr>
+                <th *ngFor="let field of querysetResponse.fields" scope="col">
+                  {{ field['field_verbose'] }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of querysetResponse.result">
+              <td *ngFor="let field of querysetResponse.fields">
+                {{ row[field['field']] }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+
+    </ngb-panel>
+  </ngb-accordion>
+
+
 </section>
