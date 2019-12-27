@@ -31,59 +31,58 @@
 
   <ngb-accordion #acc="ngbAccordion" activeIds="resultsPanel">
     <ngb-panel id="filtersPanel">
-      <ng-template ngbPanelTitle>Filters</ng-template>
+      <ng-template ngbPanelTitle>
+        <strong>Filters</strong>
+        <span class="badge badge-primary badge-pill">4</span>
+      </ng-template>
 
       <ng-template ngbPanelContent>
 
-        <table class="table-responsive table-sm table-striped table-hover">
-          <thead>
-            <tr>
-              <th scope="col"><input type="checkbox"></th>
-              <th scope="col" colspan="2">Field name</th>
-            </tr>
-          </thead>
-          <tbody>
 
-            <tr>
-              <th><input type="checkbox" disabled="disabled" selected="selected" checked="checked" /></th>
-              <td>Mandatory filter</td>
-              <td>
-                <form>
-                  <div class="form-row">
-                    <div class="col">
-                      <label class="col-form-label-sm">It's between</label>
-                      <input type="text" class="form-control form-control-sm" placeholder="First name">
-                    </div>
-                    <div class="col">
-                      <label class="col-form-label-sm">and</label>
-                      <input type="text" class="form-control form-control-sm" placeholder="First name">
-                    </div>
-                  </div>
-                </form>
-              </td>
-            </tr>
+        <ul class="list-group">
 
-            <tr>
-              <th><input type="checkbox" selected="selected" /></th>
-              <td>Mandatory filter</td>
-              <td>
-                <form>
-                  <div class="form-row">
-                    <div class="col">
-                      <label class="col-form-label-sm">Is greater than</label>
-                      <input type="text" class="form-control form-control-sm" placeholder="First name">
-                    </div>
-                  </div>
-                </form>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+
+          <li class="list-group-item-action list-group-item active"
+              *ngFor="let filter of filtersResponse">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <input type="checkbox" checked="true" [disabled]="filter.readonly" >
+                </span>
+              </div>
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  {{ filter.method }}:
+                  <strong>{{ filter.field_verbose }}</strong>
+                  ( {{ filter.lookup }} )
+                </span>
+              </div>
+              <input type="text" aria-label="First name" class="form-control" placeholder="From" [disabled]="filter.readonly" [value]="filter.value_0">
+              <input type="text" aria-label="Last name" class="form-control" placeholder="To" [disabled]="filter.readonly" [value]="filter.value_1">
+            </div>
+
+          </li>
+        </ul>
+
+        <hr class="mb-4">
+
+        <div class="row">
+          <div class="col-sm">
+            <button class="btn btn-secondary btn-lg btn-block" type="submit">Limpar</button>
+          </div>
+          <div class="col-sm">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Atualizar</button>
+          </div>
+        </div>
+
       </ng-template>
 
     </ngb-panel>
     <ngb-panel id="resultsPanel">
-      <ng-template ngbPanelTitle>Results</ng-template>
+      <ng-template ngbPanelTitle>
+        <strong>Results</strong>
+        <span class="badge badge-primary badge-pill">30</span>
+      </ng-template>
 
       <ng-template ngbPanelContent>
         <div class="d-flex justify-content-center" *ngIf="loadingQueryset">
