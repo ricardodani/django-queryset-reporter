@@ -30,7 +30,6 @@ import { QuerysetComponent } from './queryset/queryset.component'
     FormsModule,
   ],
   providers: [
-    {provide: APP_BASE_HREF, useValue: '/'},
     QuerysetService,
   ],
   bootstrap: [ AppComponent ]

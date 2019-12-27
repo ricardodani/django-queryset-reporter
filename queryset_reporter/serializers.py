@@ -2,6 +2,11 @@ from rest_framework import serializers
 from queryset_reporter.models import Queryset, DisplayField, QueryFilter
 
 
+class DisplayFieldSerialzier(serializers.ModelSerializer):
+    class Meta:
+        model = DisplayField
+
+
 class QuerysetResultSerializer(serializers.Serializer):
     '''
     Serializes a generic queryset according to the initialized `fields`

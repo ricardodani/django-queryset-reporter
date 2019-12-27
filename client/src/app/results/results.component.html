@@ -29,7 +29,7 @@
     </h2>
   </div>
 
-  <ngb-accordion #acc="ngbAccordion" activeIds="resultsPanel">
+  <ngb-accordion #acc="ngbAccordion">
     <ngb-panel id="filtersPanel">
       <ng-template ngbPanelTitle>
         <strong>Filters</strong>
@@ -38,40 +38,50 @@
 
       <ng-template ngbPanelContent>
 
-
-        <ul class="list-group">
-
-
-          <li class="list-group-item-action list-group-item active"
-              *ngFor="let filter of filtersResponse">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text">
-                  <input type="checkbox" checked="true" [disabled]="filter.readonly" >
-                </span>
-              </div>
-              <div class="input-group-prepend">
-                <span class="input-group-text">
-                  {{ filter.method }}:
-                  <strong>{{ filter.field_verbose }}</strong>
-                  ( {{ filter.lookup }} )
-                </span>
-              </div>
-              <input type="text" aria-label="First name" class="form-control" placeholder="From" [disabled]="filter.readonly" [value]="filter.value_0">
-              <input type="text" aria-label="Last name" class="form-control" placeholder="To" [disabled]="filter.readonly" [value]="filter.value_1">
-            </div>
-
-          </li>
-        </ul>
-
-        <hr class="mb-4">
-
-        <div class="row">
-          <div class="col-sm">
-            <button class="btn btn-secondary btn-lg btn-block" type="submit">Limpar</button>
+        <div class="d-flex justify-content-center" *ngIf="loadingFilters">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
           </div>
-          <div class="col-sm">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Atualizar</button>
+        </div>
+
+        <div *ngIf="!loadingFilters">
+          <ul class="list-group">
+  
+            <li class="list-group-item-action list-group-item"
+                *ngFor="let filter of filtersResponse">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <input type="checkbox" checked="true" [disabled]="filter.readonly" >
+                  </span>
+                </div>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    {{ filter.method }}
+                  </span>
+                </div>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <strong>{{ filter.field_verbose }}</strong>
+                    ( {{ filter.lookup }} )
+                  </span>
+                </div>
+                <input type="text" class="form-control" placeholder="From" [disabled]="filter.readonly" [value]="filter.value_0">
+                <input type="text" class="form-control" placeholder="To" [disabled]="filter.readonly" [value]="filter.value_1">
+              </div>
+
+            </li>
+          </ul>
+
+          <hr class="mb-4">
+
+          <div class="row">
+            <div class="col-sm">
+              <button class="btn btn-secondary btn-lg btn-block" type="submit">Limpar</button>
+            </div>
+            <div class="col-sm">
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Atualizar</button>
+            </div>
           </div>
         </div>
 
@@ -92,7 +102,7 @@
         </div>
 
         <div class="d-flex" *ngIf="!loadingQueryset && querysetResponse">
-          <table class="table-responsive table-striped table-hover table-sm">
+          <table class="table table-responsive table-striped table-hover table-sm">
             <thead>
               <tr>
                 <th *ngFor="let field of querysetResponse.fields" scope="col">

@@ -24,6 +24,7 @@ class QuerysetRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'queryset_id'
 
 
+
 class QuerysetResultView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -34,18 +35,20 @@ class QuerysetResultView(views.APIView):
             raise exceptions.NotFound
 
     def get(self, request, *args, **kwargs):
+        #filters = self.request.GET['filters']
         model_queryset = self.get_model_queryset(kwargs['queryset_id'])
         queryset = Reporter(model_queryset, self.request).get_queryset()
+        #queryset = Reporter(model_queryset, filters).get_queryset()
         fields = model_queryset.get_fields()
         result_serializer = QuerysetResultSerializer(
-            data=list(queryset),
             fields=fields,
-            many=True,
+            data=list(queryset),
+            many=True
         )
         result_serializer.is_valid(raise_exception=True)
         return response.Response(dict(
             result=result_serializer.data,
-            fields=fields
+            fields=fields,
         ))
 
 
