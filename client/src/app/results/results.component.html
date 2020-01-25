@@ -29,11 +29,14 @@
     </h2>
   </div>
 
-  <ngb-accordion #acc="ngbAccordion">
-    <ngb-panel id="filtersPanel">
+  <ngb-accordion #acc="ngbAccordion" closeOthers=true activeIds="resultsPanel">
+    <ngb-panel id="filtersPanel" [disabled]="!filtersResponse || filtersResponse == 0">
       <ng-template ngbPanelTitle>
         <strong>Filters</strong>
-        <span class="badge badge-primary badge-pill">4</span>
+        <span
+          class="badge badge-primary badge-pill"
+          *ngIf="filtersResponse"
+          >{{ filtersResponse.length }}</span>
       </ng-template>
 
       <ng-template ngbPanelContent>
@@ -44,11 +47,12 @@
           </div>
         </div>
 
-        <div *ngIf="!loadingFilters">
+        <div *ngIf="!loadingFilters && filtersResponse && filtersResponse.length > 0">
           <ul class="list-group">
-  
-            <li class="list-group-item-action list-group-item"
-                *ngFor="let filter of filtersResponse">
+            <li 
+              class="list-group-item-action list-group-item"
+              *ngFor="let filter of filtersResponse"
+              >
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text">

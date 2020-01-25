@@ -4,6 +4,15 @@
       <small class="text-muted">Manage : </small>
       Querysets
     </h2>
+
+  </div>
+
+  <div>
+    <button
+      class="btn btn-primary btn-sm"
+      (click)="addThenEdit()"
+      type="button"
+      >Add</button>&nbsp;
   </div>
 
   <div class="d-flex justify-content-center" *ngIf="loadingQuerysets">
@@ -34,8 +43,36 @@
         <td>{{ queryset.created_at }}</td>
         <td>{{ queryset.updated_at }}</td>
         <td>
-          <button>Delete</button>
-          <button [routerLink]="['/querysets', queryset.id]">Edit</button>
+          <ng-template #confirmDeletePopoverTitle>
+            <b>Confirm removal of <u>"{{ queryset.name }}"?</u></b>
+          </ng-template>
+          <ng-template #confirmDeletePopoverContent>
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="deleteQueryset(queryset.id, popOver)"
+              >Confirm</button>
+            <button
+              type="button"
+              class="btn btn-seconday"
+              (click)="popOver.close()"
+              >Cancel</button>
+          </ng-template>
+          <button
+            class="btn btn-secondary btn-sm"
+            [routerLink]="['/querysets', queryset.id]"
+            type="button"
+            >Edit</button>&nbsp;
+          <button
+            class="btn btn-danger btn-sm"
+            #popOver="ngbPopover"
+            [ngbPopover]="confirmDeletePopoverContent"
+            [popoverTitle]="confirmDeletePopoverTitle"
+            [autoClose]="false"
+            triggers="manual"
+            (click)="popOver.open()"
+            type="button"
+            >Delete</button>
         </td>
       </tr>
       </tbody>

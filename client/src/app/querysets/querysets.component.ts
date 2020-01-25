@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { QuerysetService } from '../services/queryset.service'
 
 @Component({
@@ -36,6 +37,26 @@ export class QuerysetsComponent implements OnInit {
       this._handleError,
       this._handleConcluded,
     );
+  }
+
+  _handleDeleteQueryset = (result) => {
+    console.log(result);
+    // this.setAlert('success', 'Removido com sucesso.');
+    this.getQuerysets();
+  }
+
+  deleteQueryset(querysetId: number, popOver: any) {
+    this._querysetService.delete(querysetId).subscribe(
+      this._handleDeleteQueryset,
+      this._handleError,
+      () => {
+        this._handleConcluded();
+        popOver.close();
+      }
+    )
+  }
+
+  addThenEdit() {
   }
 
 }

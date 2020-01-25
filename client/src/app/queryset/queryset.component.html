@@ -1,1 +1,34 @@
-<p>queryset works!</p>
+<form [formGroup]="querysetForm" (ngSubmit)="onSubmit()">
+  <label>
+    First Name:
+    <input type="text" formControlName="name" required>
+  </label>
+
+  <label>
+    Model:
+    <select formControlName="model">
+      <option value="">Choose a model</option>
+      <option *ngFor="let model of models" [ngValue]="model.id">{{ model.name }}</option>
+    </select>
+  </label>
+
+  <label>
+    Distinct:
+    <input type="checkbox" formControlName="distinct">
+  </label>
+
+
+
+  <button type="submit" [disabled]="!querysetForm.valid">Submit</button>
+</form>
+
+<hr>
+
+<p>
+  Form Value: {{ querysetForm.value | json }}
+</p>
+
+
+<p>
+  Form Status: {{ querysetForm.status }}
+</p>
