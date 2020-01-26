@@ -39,7 +39,7 @@ export class QuerysetComponent implements OnInit {
   }
 
   private handleError = (error) => {
-    console.log(error);
+    console.warn(error);
   }
 
   private handleConcluded = () => {
