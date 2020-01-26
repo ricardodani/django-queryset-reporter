@@ -164,4 +164,5 @@ class QueryFilterSerializer(serializers.ModelSerializer):
 class ContentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContentType
+        # fields = ('__all__')
         fields = ('id', 'name')

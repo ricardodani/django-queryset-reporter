@@ -96,5 +96,5 @@ class QueryFilterRetrieveUpdateDestroyView(
 
 
 class ModelListView(generics.ListAPIView, AuthenticatedMixin):
-    queryset = ModelManager.get_allowed_models()
+    queryset = ModelManager.get_allowed_models().order_by('model')
     serializer_class = ContentTypeSerializer
