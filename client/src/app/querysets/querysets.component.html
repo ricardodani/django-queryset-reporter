@@ -1,20 +1,14 @@
 <section class="queryset-list">
-  <div class="d-flex justify-content-center">
-    <h2>
-      <small class="text-muted">Manage : </small>
-      Querysets
-    </h2>
-
-  </div>
-
-  <div>
+  <h3>Querysets</h3>
+  <div class="d-flex">
     <button
       class="btn btn-primary btn-sm"
-      (click)="addThenEdit()"
+      [routerLink]="['/querysets', 'add']"
       type="button"
-      >Add</button>&nbsp;
+      >New queryset</button>&nbsp;
+    <hr />
   </div>
-
+  <h3>Data</h3>
   <div class="d-flex justify-content-center" *ngIf="loadingQuerysets">
     <div class="spinner-border" role="status">
       <span class="sr-only">Loading...</span>

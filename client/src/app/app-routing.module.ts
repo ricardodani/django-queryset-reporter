@@ -9,6 +9,7 @@ import { QuerysetComponent } from './queryset/queryset.component'
 const routes: Routes = [
   { path: '', component: ResultsComponent },
   { path: 'querysets', component: QuerysetsComponent },
+  { path: 'querysets/add', component: QuerysetComponent },
   { path: 'querysets/:id', component: QuerysetComponent },
 ];
 
