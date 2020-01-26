@@ -41,7 +41,7 @@ class ModelManager:
 
 
 class Queryset(models.Model):
-    '''Queryset is a model representation of a generic Model.
+    '''Represents a template to a database query based on `django.db.Queryset`.
     '''
 
     _MODEL_CHOICES = {'pk__in': ModelManager.get_allowed_models(flat=True)} 
