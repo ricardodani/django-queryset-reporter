@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 from queryset_reporter.models import Queryset, DisplayField, QueryFilter
 
@@ -158,3 +159,9 @@ class QueryFilterSerializer(serializers.ModelSerializer):
             'value_0',
             'value_1'
         )
+
+
+class ContentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        fields = ('id', 'name')

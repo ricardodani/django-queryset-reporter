@@ -6,7 +6,8 @@ from queryset_reporter.views.api import (
     DisplayFieldListCreateView,
     DisplayFieldRetrieveUpdateDestroyView,
     QueryFilterListCreateView,
-    QueryFilterRetrieveUpdateDestroyView
+    QueryFilterRetrieveUpdateDestroyView,
+    ModelListView,
 )
 from queryset_reporter.views.core import index
 
@@ -15,6 +16,10 @@ urlpatterns = [
     path(
         'api/querysets/',
         QuerysetListCreateView.as_view()
+    ),
+    path(
+        'api/querysets/models/',
+        ModelListView.as_view()
     ),
     path(
         'api/querysets/<int:queryset_id>/',
