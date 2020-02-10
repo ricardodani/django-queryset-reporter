@@ -24,7 +24,7 @@
           <th scope="col">Model</th>
           <th scope="col">Distinct</th>
           <th scope="col">Created at</th>
-          <th scope="col">Updated at</th>
+          <th scope="col">Modified at</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -32,10 +32,10 @@
       <tr *ngFor="let queryset of querysets">
         <td>{{ queryset.id }}</td>
         <td>{{ queryset.name }}</td>
-        <td>{{ queryset.model }}</td>
+        <td>{{ queryset.model.name }}</td>
         <td>{{ queryset.distinct }}</td>
-        <td>{{ queryset.created_at }}</td>
-        <td>{{ queryset.updated_at }}</td>
+        <td>{{ queryset.createdAt }}</td>
+        <td>{{ queryset.modifiedAt }}</td>
         <td>
           <ng-template #confirmDeletePopoverTitle>
             <b>Confirm removal of <u>"{{ queryset.name }}"?</u></b>

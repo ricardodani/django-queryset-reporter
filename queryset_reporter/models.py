@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
-
+from rest_framework.reverse import reverse as api_reverse
 from queryset_reporter import mapping
 from queryset_reporter import settings
 
@@ -60,6 +60,7 @@ class Queryset(models.Model):
     created_at = models.DateTimeField(_(u'Criação'), auto_now_add=True)
     modified_at = models.DateTimeField(_(u'Modificação'), auto_now=True)
 
+    # TODO: remover
     # automatic generation
     automatic_generation = models.BooleanField(
         _(u'Geração Automática'), default=False)
@@ -86,9 +87,17 @@ class Queryset(models.Model):
             ('can_use_reports', 'Prever e gerar relatórios'),
         )
 
+    # TODO: remover
     def get_absolute_url(self):
         path = reverse('queryset_reporter:qr_create')
         return f'{path}?queryset={self.id}'
+
+    @property
+    def api_url(self):
+        return api_reverse(
+            'queryset_reporter:queryset_detail',
+            kwargs=dict(queryset_id=self.id)
+        )
 
 
 class FieldModel(models.Model):

@@ -1,7 +1,18 @@
+export class Model {
+  id: number;
+  name: string;
+
+  constructor(private _data: object) {
+    this.id = _data['id'];
+    this.name = _data['name'];
+  }
+}
+
+
 export class Queryset {
   id: number;
   name: string;
-  model: number;
+  model: Model;
   distinct: boolean;
   createdAt: Date;
   modifiedAt: Date;
@@ -9,7 +20,7 @@ export class Queryset {
   constructor(private _data: object) {
     this.id = _data['id'];
     this.name = _data['name'];
-    this.model = _data['model'];
+    this.model = _data['model'] && new Model(_data['model']);
     this.distinct = _data['distinct'];
     this.createdAt = _data['created_at'];
     this.modifiedAt = _data['modified_at'];
@@ -23,15 +34,4 @@ export class Queryset {
     }
   }
 
-}
-
-
-export class Model {
-  id: number;
-  name: string;
-
-  constructor(private _data: object) {
-    this.id = _data['id'];
-    this.name = _data['name'];
-  }
 }

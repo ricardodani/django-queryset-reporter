@@ -120,7 +120,16 @@ class QuerysetResultSerializer(serializers.Serializer):
             self._set_field(field)
 
 
+class ContentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        # fields = ('__all__')
+        fields = ('id', 'name')
+
+
 class QuerysetSerializer(serializers.ModelSerializer):
+    model = ContentTypeSerializer()
+
     class Meta:
         model = Queryset
         fields = (
@@ -129,7 +138,8 @@ class QuerysetSerializer(serializers.ModelSerializer):
             'model',
             'distinct',
             'created_at',
-            'modified_at'
+            'modified_at',
+            'api_url',
         )
 
 
@@ -159,10 +169,3 @@ class QueryFilterSerializer(serializers.ModelSerializer):
             'value_0',
             'value_1'
         )
-
-
-class ContentTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContentType
-        # fields = ('__all__')
-        fields = ('id', 'name')

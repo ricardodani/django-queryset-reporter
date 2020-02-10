@@ -20,7 +20,7 @@ class QuerysetListCreateView(generics.ListCreateAPIView, AuthenticatedMixin):
     serializer_class = QuerysetSerializer
 
 
-class QuerysetRetrieveUpdateDestroyView(
+class QuerysetDetailView(
     generics.RetrieveUpdateDestroyAPIView, AuthenticatedMixin
 ):
     queryset = Queryset.objects.all()

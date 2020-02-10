@@ -35,7 +35,7 @@ export class QuerysetComponent implements OnInit {
 
   private handleQueryset = (queryset: Queryset) => {
     this.queryset = queryset;
-    this.querysetForm.patchValue(this.queryset.getFormData());
+    // this.querysetForm.patchValue(this.queryset.getFormData());
   }
 
   private handleError = (error) => {
