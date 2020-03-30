@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 ipdb = "*"
+twine = "*"
 
 [packages]
 openpyxl = "*"
