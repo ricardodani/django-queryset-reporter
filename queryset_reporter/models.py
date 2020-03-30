@@ -20,26 +20,11 @@ class Queryset(models.Model):
     '''Queryset is a model representation of a generic Model.
     '''
 
-    def _get_allowed_models():
-        '''Return allowed models based on project settings.
-        '''
-        models = ContentType.objects.all()
-        if settings.QUERYSET_REPORTER_INCLUDE_APPS:
-            models = models.filter(
-                app_label__in=settings.QUERYSET_REPORTER_INCLUDE_APPS
-            )
-        if settings.QUERYSET_REPORTER_EXCLUDE_APPS:
-            models = models.exclude(
-                app_label__in=settings.QUERYSET_REPORTER_EXCLUDE_APPS
-            )
-        return list(models.values_list('pk', flat=True))
-
     # metadata
     name = models.CharField(_(u'Nome'), **_CHAR)
     desc = models.TextField(_(u'Descrição'), **_CHAR)
     model = models.ForeignKey(
         ContentType, verbose_name=_(u'Modelo'),
-        limit_choices_to={'pk__in': _get_allowed_models()},
         on_delete=models.CASCADE
     )
     distinct = models.BooleanField(_(u'Distinguir'), default=False)

@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import queryset_reporter.models
 
 
 class Migration(migrations.Migration):
@@ -26,7 +25,7 @@ class Migration(migrations.Migration):
                 ('automatic_generation', models.BooleanField(default=False, verbose_name='Geração Automática')),
                 ('last_automatic_generation_at', models.DateTimeField(blank=True, editable=False, null=True, verbose_name='Última geração automática')),
                 ('last_automatic_generation_xlsx', models.CharField(blank=True, editable=False, max_length=250, null=True, verbose_name='Último relatório gerado em XLSX')),
-                ('model', models.ForeignKey(limit_choices_to={'pk__in': queryset_reporter.models.Queryset._get_allowed_models}, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType', verbose_name='Modelo')),
+                ('model', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType', verbose_name='Modelo')),
             ],
             options={
                 'verbose_name': 'Modelo de Relatório',
