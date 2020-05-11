@@ -1,20 +1,20 @@
 <form (ngSubmit)="onSubmit()">
   <label>
     First Name:
-    <input type="text" formControlName="name" required [ngValue]="queryset.name">
+    <input type="text" formControlName="name" required [value]="queryset.name">
   </label>
 
   <label>
     Model:
     <select formControlName="model">
       <option value="">Choose a model</option>
-      <option *ngFor="let model of models" [ngValue]="model.id" [selected]="model.id == queryset.model.id">{{ model.name }}</option>
+      <option *ngFor="let model of models" [value]="model.id" [selected]="model.id == queryset.model.id">{{ model.name }}</option>
     </select>
   </label>
 
   <label>
     Distinct:
-    <input type="checkbox" formControlName="distinct" [checked]="model.distinct">
+    <input type="checkbox" formControlName="distinct" [checked]="queryset.distinct">
   </label>
 
 
