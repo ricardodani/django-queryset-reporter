@@ -5,7 +5,13 @@
 
 {% block content %}
 
-{% if rendered_csv %}
+{% if rendered_xlsx %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <h4>{% trans "XLSX gerado" %}</h4>
+  {% trans "Acesse-o através desta URL: " %}<a href="{{ rendered_xlsx }}">{{ rendered_xlsx }}</a>
+</div>
+{% elif rendered_csv %}
 <div class="alert alert-success">
   <button type="button" class="close" data-dismiss="alert">&times;</button>
   <h4>{% trans "CSV gerado" %}</h4>
@@ -13,20 +19,12 @@
 </div>
 {% endif %}
 
-{% if rendered_xlsx %}
-<div class="alert alert-success">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <h4>{% trans "XLSX gerado" %}</h4>
-  {% trans "Acesse-o através desta URL: " %}<a href="{{ rendered_xlsx }}">{{ rendered_xlsx }}</a>
-</div>
-{% endif %}
-
 <form action="{% url 'queryset_reporter:qr_create' %}" method="GET" id="querysets-form">
 {% if reporter.queryset %}
-<input type="hidden" value="{{ reporter.queryset.id }}" name="queryset" /> 
+<input type="hidden" value="{{ reporter.queryset.id }}" name="queryset" />
 {% endif %}
 <div class="row-fluid">
-    {% if reporter.queryset %}    
+    {% if reporter.queryset %}
     <div class="span3">
         <ul class="nav filter-nav">
 
@@ -75,6 +73,7 @@
                     <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">{% trans "Gerar relatório" %}<span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="?{{ request.META.QUERY_STRING }}&format=xlsx">XLSX</a></li>
+                        <li><a href="?{{ request.META.QUERY_STRING }}&format=csv">CSV</a></li>
                     {% comment %}
                     <li><a href="#">CSV</a></li>
                     <li><a href="#">PDF</a></li>
@@ -120,7 +119,7 @@
             <tr>
                 {% for field in reporter.fields %}
                 <td>
-                    {% spaceless %} 
+                    {% spaceless %}
                     {{ field.pre_concatenate|default_if_none:'' }}
                     {{ line|get:field.get_field|default_if_none:'-' }}
                     {{ field.pos_concatenate|default_if_none:'' }}
