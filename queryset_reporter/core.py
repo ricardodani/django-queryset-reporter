@@ -2,6 +2,7 @@ import re
 import os
 import uuid
 from datetime import datetime
+import csv
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +10,12 @@ from django.db.models import aggregates
 from openpyxl import Workbook
 
 from queryset_reporter.models import Queryset, QueryFilter
+
+
+def get_filename(ext, prefix=''):
+    filename = f'{ext}/{prefix}%s.{ext}' % uuid.uuid4().hex
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    return filename
 
 
 class Reporter(object):
@@ -190,14 +197,11 @@ class Reporter(object):
     def count(self):
         return self.get_base_qs().count()
 
-    def render_xlsx(self):
-        wb = Workbook()
-        ws = wb.create_sheet()
+    def generate_export_data(self):
+        result_dicts = []
 
-        ws.append(
-            [x.field_verbose for x in self.queryset.displayfield_set.all()])
-        for line in self.get_base_qs():
-            _list = []
+        for record in self.get_base_qs():
+            _item = {}
             for field in self.fields:
                 pre_concat = (
                     field.pre_concatenate if field.pre_concatenate else ''
@@ -205,10 +209,35 @@ class Reporter(object):
                 pos_concat = (
                     field.pos_concatenate if field.pos_concatenate else ''
                 )
-                line_value = line.get(field.get_field)
-                _list.append(f'{pre_concat}{line_value}{pos_concat}')
-            ws.append(_list)
-        file_name = 'xlsx/%s.xlsx' % uuid.uuid4().hex
+                line_value = record.get(field.get_field)
+                _item[field.field_verbose] = f'{pre_concat}{line_value}{pos_concat}'
+
+            result_dicts.append(_item)
+        return result_dicts
+
+    def render_csv(self):
+        data = self.generate_export_data()
+        file_name = get_filename('csv')
+        file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+            writer.writeheader()
+            writer.writerows(data)
+
+        return settings.MEDIA_URL + file_name
+
+    def render_xlsx(self):
+        wb = Workbook(write_only=True)
+        ws = wb.create_sheet()
+        data = self.generate_export_data()
+
+        ws.append(tuple(data[0].keys()))
+
+        for record in data:
+            ws.append(tuple(record.values()))
+
+        file_name = get_filename('xlsx')
         file_path = os.path.join(settings.MEDIA_ROOT, file_name)
         wb.save(file_path)
 
